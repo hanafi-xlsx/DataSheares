@@ -4,6 +4,8 @@ import os
 from time import sleep
 # import call method from subprocess module
 from subprocess import call
+import matplotlib.pyplot as plt
+import math
 
 # define clear function
 def clear():
@@ -71,8 +73,21 @@ def main_menu():
         case(3):
             quit_program()  # If user chose 3, print the quit message.
 
+# Function to display charts
 def view_charts():
-    # Function to display charts (not implemented in this code).
+    figure, axis = plt.subplots(2,1)
+
+    # Average number of bus passengers per bus vs year as a line plot
+    xpoints = b[:,0]
+    ypoints = b[:,1]/b[:,2]
+    heading_font = {'family':'sans','color':'black','size':15}
+    axis[0].grid(axis = 'x')
+    axis[0].set_title("Avg. pax per bus over the years", fontdict = heading_font)
+    axis[0].plot(xpoints, ypoints, color='r', marker='s', linestyle="dashed", linewidth='3.2')
+
+    # Number of personal vehicles vs year as a bar chart
+    
+    plt.show()
     print("You selected 'view charts'.")  # Placeholder message for chart view (to be implemented).
 
 def show_statistics():

@@ -28,9 +28,19 @@ invalid_input = "Please give a valid input."
 quit_message = "Thanks for using this program."
 types = a[1:,0]  # Define a list of vehicle types.
 
+def go_to_main_menu():
+    print("Going to main menu...")
+    sleep(1)
+    main_menu()
+    
+def quit_program():
+    print("Quitting program...")
+    sleep(1)
+    print("Thanks for using DataSheares!")
+
 def main_menu():
     # Function to display the main menu and handle user choices.
-    print("Main menu: Select your choice:\n1. View charts\n2. Show statistics\n3. Quit program")
+    print("Main menu:\n\nSelect your choice:\n1. View charts\n2. Show statistics\n3. Quit program\n")
     menu_input = input("Give your selection here: ")  # Take user input for the menu choice.
     try:
         menu_input = int(menu_input)  # Convert the input to an integer.
@@ -41,7 +51,7 @@ def main_menu():
             clear()
             show_statistics()  # If user chose 2, call the show_statistics() function.
         elif menu_input == 3:
-            print(quit_message)  # If user chose 3, print the quit message.
+            quit_program()  # If user chose 3, print the quit message.
         else:
             print(invalid_input)  # If the input is not valid, print an error message and show the menu again.
             main_menu()
@@ -52,18 +62,20 @@ def main_menu():
 
 def view_charts():
     # Function to display charts (not implemented in this code).
-    print("View charts")  # Placeholder message for chart view (to be implemented).
+    print("You selected 'view charts'.")  # Placeholder message for chart view (to be implemented).
 
 def show_statistics():
+    print("You selected 'show statistics'.\n")
     # Function to show statistics based on user-selected vehicle type.
     print("Select a type:")
     for i in range(len(types)):
         print("{}. {}".format(i+1, types[i]))
-    stats_input = input("Give your selection here: ")  # Take user input for the type selection.
+    stats_input = input("\nGive your selection here: ")  # Take user input for the type selection.
     selected_type = types[int(stats_input)-1]  # Get the selected vehicle type based on user input. e.g.: 'buses', 'loaded trucks'
     selected_type_all_years = b[:, int(stats_input)]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
     selected_average = np.mean(selected_type_all_years)  # Calculate the average of the selected vehicle type. 
     clear()
+    print("You selected '{}'\n".format(selected_type))
     print("Mean number of {types} from {start_year} to {end_year} is {mean}".format(types=selected_type.lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
 
     # Find years where the number of types was higher than the average.
@@ -81,10 +93,11 @@ def show_statistics():
 
 def custom_range_avg(selected_type):
     # Function to calculate the average of a custom range of years for a specific vehicle type.
-    print("What do you want to do? \n1. Find the average of {} in custom range of years\n2. See the number of {} in a specific year\n3. Back to the main menu\n4. Quit the program".format(types[selected_type-1].lower(),types[selected_type-1].lower()))
+    print("\nWhat do you want to do? \n1. Find the average of {} in custom range of years\n2. See the number of {} in a specific year\n3. Back to the main menu\n4. Quit the program\n".format(types[selected_type-1].lower(),types[selected_type-1].lower()))
     custom_range_input = int(input("Give your selection here: "))  # Take user input for the custom range choice.
     if custom_range_input == 1:
         clear()
+        print("You selected 'Find the average of {} in custom range of years'.\n".format(types[selected_type-1].lower()))
         start = int(input("Please give the start year (between {} to {}): ".format(b[0,0], b[-1,0])))  # Take user input for the start year.
         end = int(input("Please give the end year (between {start} to {end_year}, end year will not be included in the average): ".format(start=start, end_year=b[-1,0])))  # Take user input for the end year.
         # Calculate the average number of vehicles for the custom range of years.
@@ -93,15 +106,16 @@ def custom_range_avg(selected_type):
         custom_range_avg(selected_type)  # Call the function again to continue or choose another option.
     elif custom_range_input == 2:
         clear()
+        print("You selected: 'See the number of {} in a specific year'.\n".format(types[selected_type-1].lower()))
         chosen_year = input("Give the year you want to view, from {} to {}: ".format(b[0,0], b[-1,0]))
         chosen_index = int(chosen_year)%100
         print("There was {} {} in {}.".format(b[chosen_index,selected_type], types[selected_type-1].lower(), chosen_year))
         custom_range_avg(selected_type)
     elif custom_range_input == 3:
         clear()
-        main_menu()  # Go back to the main menu.
+        go_to_main_menu()  # Go back to the main menu.
     elif custom_range_input == 4:
-        print(quit_message)  # Quit the program.
+        quit_program()  # Quit the program.
     else:
         print(invalid_input)  # If the input is not valid, show an error message.
 

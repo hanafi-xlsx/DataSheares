@@ -28,6 +28,16 @@ invalid_input = "Please give a valid input."
 quit_message = "Thanks for using this program."
 types = a[1:,0]  # Define a list of vehicle types.
 
+def go_to_main_menu():
+    print("Going to main menu...")
+    sleep(1)
+    main_menu()
+    
+def quit_program():
+    print("Quitting program...")
+    sleep(1)
+    print("Thanks for using DataSheares!")
+
 def main_menu():
     # Function to display the main menu and handle user choices.
     print("Main menu: Select your choice:\n1. View charts\n2. Show statistics\n3. Quit program")
@@ -41,7 +51,7 @@ def main_menu():
             clear()
             show_statistics()  # If user chose 2, call the show_statistics() function.
         elif menu_input == 3:
-            print(quit_message)  # If user chose 3, print the quit message.
+            quit_program()  # If user chose 3, print the quit message.
         else:
             print(invalid_input)  # If the input is not valid, print an error message and show the menu again.
             main_menu()
@@ -103,9 +113,9 @@ def custom_range_avg(selected_type):
         custom_range_avg(selected_type)
     elif custom_range_input == 3:
         clear()
-        main_menu()  # Go back to the main menu.
+        go_to_main_menu()  # Go back to the main menu.
     elif custom_range_input == 4:
-        print(quit_message)  # Quit the program.
+        quit_program()  # Quit the program.
     else:
         print(invalid_input)  # If the input is not valid, show an error message.
 

@@ -52,9 +52,10 @@ def main_menu():
 
 def view_charts():
     # Function to display charts (not implemented in this code).
-    print("View charts")  # Placeholder message for chart view (to be implemented).
+    print("You selected 'view charts'.")  # Placeholder message for chart view (to be implemented).
 
 def show_statistics():
+    print("You selected 'show statistics'.")
     # Function to show statistics based on user-selected vehicle type.
     print("Select a type:")
     for i in range(len(types)):
@@ -64,6 +65,7 @@ def show_statistics():
     selected_type_all_years = b[:, int(stats_input)]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
     selected_average = np.mean(selected_type_all_years)  # Calculate the average of the selected vehicle type. 
     clear()
+    print("You selected '{}'".format(selected_type))
     print("Mean number of {types} from {start_year} to {end_year} is {mean}".format(types=selected_type.lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
 
     # Find years where the number of types was higher than the average.
@@ -85,6 +87,7 @@ def custom_range_avg(selected_type):
     custom_range_input = int(input("Give your selection here: "))  # Take user input for the custom range choice.
     if custom_range_input == 1:
         clear()
+        print("You selected 'Find the average of {} in custom range of years'.".format(types[selected_type-1].lower()))
         start = int(input("Please give the start year (between {} to {}): ".format(b[0,0], b[-1,0])))  # Take user input for the start year.
         end = int(input("Please give the end year (between {start} to {end_year}, end year will not be included in the average): ".format(start=start, end_year=b[-1,0])))  # Take user input for the end year.
         # Calculate the average number of vehicles for the custom range of years.
@@ -93,6 +96,7 @@ def custom_range_avg(selected_type):
         custom_range_avg(selected_type)  # Call the function again to continue or choose another option.
     elif custom_range_input == 2:
         clear()
+        print("You selected: 'See the number of {} in a specific year'.".format(types[selected_type-1].lower()))
         chosen_year = input("Give the year you want to view, from {} to {}: ".format(b[0,0], b[-1,0]))
         chosen_index = int(chosen_year)%100
         print("There was {} {} in {}.".format(b[chosen_index,selected_type], types[selected_type-1].lower(), chosen_year))

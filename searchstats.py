@@ -14,21 +14,7 @@ class MyWindow(QMainWindow):
         self.layout = QVBoxLayout()
         self.central_widget.setLayout(self.layout)
 
-        selected_type_all_years = b[:, 1]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
-        selected_average = np.mean(selected_type_all_years)  # Calculate the average of the selected vehicle type. 
-        self.mean_label = QLabel("Mean number of {types} from {start_year} to {end_year} is {mean}".format(types=type_array[0].lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
-        self.layout.addWidget(self.mean_label)
-        x = np.where(selected_type_all_years > selected_average)
-        higher_years_array = b[x, 0][0]
-        higher_years = higher_years_array[0].replace(" ", ",")
-        self.higher_label = QLabel("The number of {types} were higher than average in these years:".format(types=type_array[0].lower()), higher_years)
-        self.layout.addWidget(self.higher_label)
-        maximum = selected_type_all_years.max()
-        most_year = b[np.where(b == maximum)[0], 0][0]
-        self.highest_label = QLabel("The highest was {maximum} in {most_year}.".format(maximum=maximum, most_year=most_year))
-        self.layout.addWidget(self.highest_label)
-
-        type_group = QHBoxLayout()
+        type_group = QVBoxLayout()
         self.label = QLabel("Select a type from the table:")
         type_group.addWidget(self.label, alignment=Qt.AlignCenter)
         self.type_combo_box = QComboBox(self)
@@ -39,7 +25,22 @@ class MyWindow(QMainWindow):
         type_group.addWidget(self.type_combo_box, alignment=Qt.AlignCenter)
         self.layout.addLayout(type_group)
 
-        year_group = QHBoxLayout()
+        self.labels_layout = QVBoxLayout()
+        selected_type_all_years = b[:, 1]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
+        selected_average = np.mean(selected_type_all_years)  # Calculate the average of the selected vehicle type. 
+        self.mean_label = QLabel("Mean number of {types} from {start_year} to {end_year} is {mean}".format(types=type_array[0].lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
+        self.labels_layout.addWidget(self.mean_label, alignment=Qt.AlignCenter)
+        x = np.where(selected_type_all_years > selected_average)
+        years = list_items(b[x, 0][0])
+        # self.higher_label = QLabel("The number of {types} were higher than average in these years: {years}".format(types=type_array[0].lower(), years=years))
+        # self.labels_layout.addWidget(self.higher_label, alignment=Qt.AlignCenter)
+        maximum = selected_type_all_years.max()
+        most_year = b[np.where(b == maximum)[0], 0][0]
+        self.highest_label = QLabel("The highest was {maximum} in {most_year}.".format(maximum=maximum, most_year=most_year))
+        self.labels_layout.addWidget(self.highest_label, alignment=Qt.AlignCenter)
+        self.layout.addLayout(self.labels_layout)
+
+        year_group = QVBoxLayout()
         self.label = QLabel("Select the year you would like:")
         year_group.addWidget(self.label, alignment=Qt.AlignCenter)
         self.year_combo_box = QComboBox(self)
@@ -57,6 +58,7 @@ class MyWindow(QMainWindow):
         self.layout.addWidget(self.display_label, alignment=Qt.AlignCenter)
 
         self.menu_button = QPushButton("Main Menu", self)
+        self.menu_button.setFixedWidth(200)
         self.menu_button.clicked.connect(self.mainMenu)
         self.layout.addWidget(self.menu_button)
 
@@ -69,14 +71,16 @@ class MyWindow(QMainWindow):
         selected_column = type_array.index(selected_option)
         selected_type_all_years = b[:, int(selected_column)]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
         selected_average = np.mean(selected_type_all_years)  # Calculate the average of the selected vehicle type. 
-        self.mean_label.setText("Mean number of {types} from {start_year} to {end_year} is {mean}".format(types=selected_column.lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
+        self.mean_label.setText("Mean number of {types} from {start_year} to {end_year} is {mean}".format(types=selected_option.lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
         x = np.where(selected_type_all_years > selected_average)
-        for i in b[x, 0][0]:
-            print("Gay", i)
-        self.higher_label.setText("The number of {types} were higher than average in these years:".format(types=selected_column.lower()))
+        self.higher_label.setText("The number of {types} were higher than average in these years: ".format(types=selected_option.lower()) + list_items(b[x, 0][0]))
         maximum = selected_type_all_years.max()
         most_year = b[np.where(b == maximum)[0], 0][0]
         self.highest_label.setText("The highest was {maximum} in {most_year}.".format(maximum=maximum, most_year=most_year))
+
+def list_items(items):
+    result = ', '.join(str(item) for item in items[:-1])
+    return result + ', and ' + str(items[-1])
 
 def loadCSVData(fname):
     # Function to load CSV data from the given file name and return it as a li5st of lists.
@@ -104,7 +108,7 @@ def searchStats():
     print(type_array)
     app = QApplication([])
     window = MyWindow(type_array)
-    window.resize(500,300)
+    window.resize(500,200)
     window.move(700, 250)
     window.show()
     app.exec_()

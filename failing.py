@@ -5,10 +5,10 @@ from time import sleep
 # import call method from subprocess module
 from subprocess import call
 
-# define clear function
-def clear():
-    # check and make call for specific operating system
-    _ = call('clear' if os.name == 'posix' else 'cls')
+# # define clear function
+# def clear():2
+#     # check and make call for specific operating system
+#     _ = call('clear' if os.name == 'posix' else 'cls')
 
 def loadCSVData(fname):
     # Function to load CSV data from the given file name and return it as a li5st of lists.
@@ -45,10 +45,10 @@ def main_menu():
     try:
         menu_input = int(menu_input)  # Convert the input to an integer.
         if menu_input == 1:
-            clear()
+            # clear()
             view_charts()  # If user chose 1, call the view_charts() function.
         elif menu_input == 2:
-            clear()
+            # clear()
             show_statistics()  # If user chose 2, call the show_statistics() function.
         elif menu_input == 3:
             quit_program()  # If user chose 3, print the quit message.
@@ -56,7 +56,7 @@ def main_menu():
             print(invalid_input)  # If the input is not valid, print an error message and show the menu again.
             main_menu()
     except:
-        clear()
+        # clear()
         print(invalid_input)  # If there's an exception in input conversion, print an error message and show the menu again.
         main_menu()
 
@@ -74,7 +74,7 @@ def show_statistics():
     selected_type = types[int(stats_input)-1]  # Get the selected vehicle type based on user input. e.g.: 'buses', 'loaded trucks'
     selected_type_all_years = b[:, int(stats_input)]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
     selected_average = np.mean(selected_type_all_years)  # Calculate the average of the selected vehicle type. 
-    clear()
+    # clear()
     print("You selected '{}'\n".format(selected_type))
     print("Mean number of {types} from {start_year} to {end_year} is {mean}".format(types=selected_type.lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
 
@@ -96,7 +96,7 @@ def custom_range_avg(selected_type):
     print("\nWhat do you want to do? \n1. Find the average of {} in custom range of years\n2. See the number of {} in a specific year\n3. Back to the main menu\n4. Quit the program\n".format(types[selected_type-1].lower(),types[selected_type-1].lower()))
     custom_range_input = int(input("Give your selection here: "))  # Take user input for the custom range choice.
     if custom_range_input == 1:
-        clear()
+        # clear()
         print("You selected 'Find the average of {} in custom range of years'.\n".format(types[selected_type-1].lower()))
         start = int(input("Please give the start year (between {} to {}): ".format(b[0,0], b[-1,0])))  # Take user input for the start year.
         end = int(input("Please give the end year (between {start} to {end_year}, end year will not be included in the average): ".format(start=start, end_year=b[-1,0])))  # Take user input for the end year.
@@ -105,14 +105,14 @@ def custom_range_avg(selected_type):
         print("The average number of {} from {} to {} is {:d}".format(types[selected_type-1].lower(), start, end, int(custom_filter)))
         custom_range_avg(selected_type)  # Call the function again to continue or choose another option.
     elif custom_range_input == 2:
-        clear()
+        # clear()
         print("You selected: 'See the number of {} in a specific year'.\n".format(types[selected_type-1].lower()))
         chosen_year = input("Give the year you want to view, from {} to {}: ".format(b[0,0], b[-1,0]))
         chosen_index = int(chosen_year)%100
         print("There was {} {} in {}.".format(b[chosen_index,selected_type], types[selected_type-1].lower(), chosen_year))
         custom_range_avg(selected_type)
     elif custom_range_input == 3:
-        clear()
+        # clear()
         go_to_main_menu()  # Go back to the main menu.
     elif custom_range_input == 4:
         quit_program()  # Quit the program.

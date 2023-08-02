@@ -1,6 +1,6 @@
 import numpy as np
 import csv
-import os
+from os import system, name
 from time import sleep
 # import call method from subprocess module
 from subprocess import call
@@ -9,8 +9,13 @@ import math
 
 # define clear function
 def clear():
-    # check and make call for specific operating system
-    _ = call('clear' if os.name == 'posix' else 'cls')
+    # for windows 
+    if name == 'nt': 
+        _ = system('cls') 
+
+    # for mac and linux(here, os.name is 'posix') 
+    else: 
+        _ = system('clear') 
 
 def loadCSVData(fname):
     # Function to load CSV data from the given file name and return it as a li5st of lists.
@@ -29,6 +34,7 @@ b = np.array(a.T[1:,], dtype=np.int32)
 invalid_input = "Please give a valid input."
 quit_message = "Thanks for using this program."
 types = a[1:,0]  # Define a list of vehicle types.
+generic_input_message = "Give your selection here: "
 
 def list_items(items):
     result = ', '.join(str(item) for item in items[:-1])
@@ -62,7 +68,7 @@ def quit_program():
 def main_menu():
     # Function to display the main menu and handle user choices.
     print("Main menu:\n\nSelect your choice:\n1. View charts\n2. Show statistics\n3. Quit program\n")
-    menu_input = input_validation("Give your selection here: ", 3)
+    menu_input = input_validation(generic_input_message, 3)
     match(menu_input):
         case(1):
             clear()
@@ -75,20 +81,51 @@ def main_menu():
 
 # Function to display charts
 def view_charts():
+    print("You selected 'view charts'.")  
     figure, axis = plt.subplots(2,1)
+    opacity = 0.5
+    error_config = {'ecolor': '0.3'}
+    color = 'r'
 
     # Average number of bus passengers per bus vs year as a line plot
-    xpoints = b[:,0]
-    ypoints = b[:,1]/b[:,2]
-    heading_font = {'family':'sans','color':'black','size':15}
+    xpoints_line = b[:,0]
+    ypoints_line = b[:,1]/b[:,2]
+    heading_font = {'family':'sans','color':'black','size': 15}
     axis[0].grid(axis = 'x')
     axis[0].set_title("Avg. pax per bus over the years", fontdict = heading_font)
-    axis[0].plot(xpoints, ypoints, color='r', marker='s', linestyle="dashed", linewidth='3.2')
+    axis[0].plot(xpoints_line, ypoints_line, 
+                 color=color, 
+                 alpha=opacity, 
+                 marker='s', 
+                 linestyle="dashed", 
+                 linewidth='3.2')
 
     # Number of personal vehicles vs year as a bar chart
-    
+    xpoints_bar = b[:,0]
+    ypoints_bar = b[:,3]
+    bar_width = 0.7
+    bar_limit=[800000,1200000]
+    axis[1].set_title("No. of personal vehicles over the years", fontdict = heading_font)
+    axis[1].bar(xpoints_bar, ypoints_bar, bar_width,
+                 alpha=opacity,
+                 color=color,
+                 error_kw=error_config,)
+    axis[1].set(ylim=bar_limit)
+    # using padding
+    figure.tight_layout(pad=3.0)
     plt.show()
-    print("You selected 'view charts'.")  # Placeholder message for chart view (to be implemented).
+
+    print("\nWhat do you want to do? \n1. Show statistics\n2. Main menu\n3. Quit the program\n")
+    view_charts_input = input_validation(generic_input_message, 3) # Take user input 
+    match(view_charts_input):
+        case(1):
+            clear()
+            show_statistics()
+        case(2):
+            clear()
+            main_menu()
+        case(3):
+            quit_program()
 
 def show_statistics():
     print("You selected 'show statistics'.\n")
@@ -96,7 +133,7 @@ def show_statistics():
     print("Select a type:")
     for i in range(len(types)):
         print("{}. {}".format(i+1, types[i]))
-    stats_input = input_validation("\nGive your selection here: ", len(types)) # Take user input for the type selection.
+    stats_input = input_validation(generic_input_message, len(types)) # Take user input for the type selection.
     selected_type = types[int(stats_input)-1]  # Get the selected vehicle type based on user input. e.g.: 'buses', 'loaded trucks'
     selected_type_all_years = b[:, int(stats_input)]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
     selected_average = np.mean(selected_type_all_years)  # Calculate the average of the selected vehicle type. 
@@ -118,7 +155,7 @@ def show_statistics():
 def custom_range_avg(selected_type:int):
     # Function to calculate the average of a custom range of years for a specific vehicle type.
     print("\nWhat do you want to do? \n1. Find the average of {} in custom range of years\n2. See the number of {} in a specific year\n3. Back to the main menu\n4. Quit the program\n".format(types[selected_type-1].lower(),types[selected_type-1].lower()))
-    custom_range_input = input_validation("Give your selection here: ", 4) # Take user input for the custom range choice.
+    custom_range_input = input_validation(generic_input_message, 4) # Take user input for the custom range choice.
     match(custom_range_input):
         case(1):
             clear()

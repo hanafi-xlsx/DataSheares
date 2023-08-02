@@ -1,56 +1,82 @@
 import numpy as np
 import csv
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QComboBox, QVBoxLayout, QWidget, QPushButton
+from PyQt5.QtWidgets import QHBoxLayout, QApplication, QMainWindow, QLabel, QComboBox, QVBoxLayout, QWidget, QPushButton
 from PyQt5.QtCore import Qt
 
 class MyWindow(QMainWindow):
-    def __init__(self, options):
+    def __init__(self, type_array):
         super().__init__()
 
         self.setWindowTitle("Search Statistics")
-
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
-
         self.layout = QVBoxLayout()
         self.central_widget.setLayout(self.layout)
 
+        selected_type_all_years = b[:, 1]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
+        selected_average = np.mean(selected_type_all_years)  # Calculate the average of the selected vehicle type. 
+        self.mean_label = QLabel("Mean number of {types} from {start_year} to {end_year} is {mean}".format(types=type_array[0].lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
+        self.layout.addWidget(self.mean_label)
+        x = np.where(selected_type_all_years > selected_average)
+        higher_years_array = b[x, 0][0]
+        higher_years = higher_years_array[0].replace(" ", ",")
+        self.higher_label = QLabel("The number of {types} were higher than average in these years:".format(types=type_array[0].lower()), higher_years)
+        self.layout.addWidget(self.higher_label)
+        maximum = selected_type_all_years.max()
+        most_year = b[np.where(b == maximum)[0], 0][0]
+        self.highest_label = QLabel("The highest was {maximum} in {most_year}.".format(maximum=maximum, most_year=most_year))
+        self.layout.addWidget(self.highest_label)
+
+        type_group = QHBoxLayout()
         self.label = QLabel("Select a type from the table:")
-        self.layout.addWidget(self.label, alignment=Qt.AlignCenter)
-        
-        self.combo_box = QComboBox(self)
-        for ele in options:
-            self.combo_box.addItem(ele)
-        self.combo_box.setFixedWidth(200)
-        self.layout.addWidget(self.combo_box, alignment=Qt.AlignCenter)
+        type_group.addWidget(self.label, alignment=Qt.AlignCenter)
+        self.type_combo_box = QComboBox(self)
+        for ele in type_array:
+            self.type_combo_box.addItem(ele)
+        self.type_combo_box.currentIndexChanged.connect(self.type_selected)
+        self.type_combo_box.setFixedWidth(200)
+        type_group.addWidget(self.type_combo_box, alignment=Qt.AlignCenter)
+        self.layout.addLayout(type_group)
 
+        year_group = QHBoxLayout()
         self.label = QLabel("Select the year you would like:")
-        self.layout.addWidget(self.label, alignment=Qt.AlignCenter)
-
-        self.combo_box = QComboBox(self)
-        print(b[:,0])
-        # year_array = np.array(b[:,0])
-        # # Convert the array to a Python list and split the string representation
-        # year_list = year_array.tolist()
-        # years = ' '.join(map(str, year_list))
-        # print(years)
-        # for ele in b[:,0]:
-        #     self.combo_box.addItem(ele)
-        # self.combo_box.setFixedWidth(200)
-        # self.layout.addWidget(self.combo_box, alignment=Qt.AlignCenter)
-
-        #b[:,0]
+        year_group.addWidget(self.label, alignment=Qt.AlignCenter)
+        self.year_combo_box = QComboBox(self)
+        year_array = np.array(b[:,0])
+        year_list = year_array.tolist()
+        years = ' '.join(map(str, year_list))
+        years_array = years.split()
+        for ele in years_array:
+            self.year_combo_box.addItem(ele)
+        self.year_combo_box.setFixedWidth(200)
+        year_group.addWidget(self.year_combo_box, alignment=Qt.AlignCenter)
+        self.layout.addLayout(year_group)
 
         self.display_label = QLabel("Display Area")
         self.layout.addWidget(self.display_label, alignment=Qt.AlignCenter)
 
         self.menu_button = QPushButton("Main Menu", self)
         self.menu_button.clicked.connect(self.mainMenu)
+        self.layout.addWidget(self.menu_button)
 
     def mainMenu(self):
         self.close()
         return
+    
+    def type_selected(self, index):
+        selected_option = self.sender().currentText()
+        selected_column = type_array.index(selected_option)
+        selected_type_all_years = b[:, int(selected_column)]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
+        selected_average = np.mean(selected_type_all_years)  # Calculate the average of the selected vehicle type. 
+        self.mean_label.setText("Mean number of {types} from {start_year} to {end_year} is {mean}".format(types=selected_column.lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
+        x = np.where(selected_type_all_years > selected_average)
+        for i in b[x, 0][0]:
+            print("Gay", i)
+        self.higher_label.setText("The number of {types} were higher than average in these years:".format(types=selected_column.lower()))
+        maximum = selected_type_all_years.max()
+        most_year = b[np.where(b == maximum)[0], 0][0]
+        self.highest_label.setText("The highest was {maximum} in {most_year}.".format(maximum=maximum, most_year=most_year))
 
 def loadCSVData(fname):
     # Function to load CSV data from the given file name and return it as a li5st of lists.
@@ -71,21 +97,22 @@ quit_message = "Thanks for using this program."
 types = a[1:,0]  # Define a list of vehicle types.
 
 def searchStats():
-    options = []
+    global type_array
+    type_array = []
     for ele in types:
-        options.append(ele)
-    print(options)
+        type_array.append(ele)
+    print(type_array)
     app = QApplication([])
-    window = MyWindow(options)
+    window = MyWindow(type_array)
     window.resize(500,300)
     window.move(700, 250)
     window.show()
     app.exec_()
     print(b[:,0])
     return
-    stats_input = input("\nGive your selection here: ")  # Take user input for the type selection.
-    selected_type = types[int(stats_input)-1]  # Get the selected vehicle type based on user input. e.g.: 'buses', 'loaded trucks'
-    selected_type_all_years = b[:, int(stats_input)]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
+    selected_option = input("\nGive your selection here: ")  # Take user input for the type selection.
+    selected_type = types[int(selected_option)-1]  # Get the selected vehicle type based on user input. e.g.: 'buses', 'loaded trucks'
+    selected_type_all_years = b[:, int(selected_option)]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
     selected_average = np.mean(selected_type_all_years)  # Calculate the average of the selected vehicle type. 
     # clear()
     print("You selected '{}'\n".format(selected_type))
@@ -102,7 +129,7 @@ def searchStats():
     maximum = selected_type_all_years.max()
     most_year = b[np.where(b == maximum)[0], 0][0]
     print("The highest was {maximum} in {most_year}.".format(maximum=maximum, most_year=most_year))
-    custom_range_avg(int(stats_input))  # Call the function to calculate the average for a custom range of years.
+    custom_range_avg(int(selected_option))  # Call the function to calculate the average for a custom range of years.
 
 def custom_range_avg(selected_type):
     # Function to calculate the average of a custom range of years for a specific vehicle type.

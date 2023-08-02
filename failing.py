@@ -34,6 +34,7 @@ b = np.array(a.T[1:,], dtype=np.int32)
 invalid_input = "Please give a valid input."
 quit_message = "Thanks for using this program."
 types = a[1:,0]  # Define a list of vehicle types.
+generic_input_message = "Give your selection here: "
 
 def list_items(items):
     result = ', '.join(str(item) for item in items[:-1])
@@ -67,7 +68,7 @@ def quit_program():
 def main_menu():
     # Function to display the main menu and handle user choices.
     print("Main menu:\n\nSelect your choice:\n1. View charts\n2. Show statistics\n3. Quit program\n")
-    menu_input = input_validation("Give your selection here: ", 3)
+    menu_input = input_validation(generic_input_message, 3)
     match(menu_input):
         case(1):
             clear()
@@ -115,7 +116,7 @@ def view_charts():
     plt.show()
 
     print("\nWhat do you want to do? \n1. Show statistics\n2. Main menu\n3. Quit the program\n")
-    view_charts_input = input_validation("Give your selection here: ", 3) # Take user input 
+    view_charts_input = input_validation(generic_input_message, 3) # Take user input 
     match(view_charts_input):
         case(1):
             clear()
@@ -132,7 +133,7 @@ def show_statistics():
     print("Select a type:")
     for i in range(len(types)):
         print("{}. {}".format(i+1, types[i]))
-    stats_input = input_validation("\nGive your selection here: ", len(types)) # Take user input for the type selection.
+    stats_input = input_validation(generic_input_message, len(types)) # Take user input for the type selection.
     selected_type = types[int(stats_input)-1]  # Get the selected vehicle type based on user input. e.g.: 'buses', 'loaded trucks'
     selected_type_all_years = b[:, int(stats_input)]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
     selected_average = np.mean(selected_type_all_years)  # Calculate the average of the selected vehicle type. 
@@ -154,7 +155,7 @@ def show_statistics():
 def custom_range_avg(selected_type:int):
     # Function to calculate the average of a custom range of years for a specific vehicle type.
     print("\nWhat do you want to do? \n1. Find the average of {} in custom range of years\n2. See the number of {} in a specific year\n3. Back to the main menu\n4. Quit the program\n".format(types[selected_type-1].lower(),types[selected_type-1].lower()))
-    custom_range_input = input_validation("Give your selection here: ", 4) # Take user input for the custom range choice.
+    custom_range_input = input_validation(generic_input_message, 4) # Take user input for the custom range choice.
     match(custom_range_input):
         case(1):
             clear()

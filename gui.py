@@ -29,10 +29,9 @@ class MyWindow(QMainWindow):
     def on_option_selected(self, index):
         selected_option = self.option_box.itemText(index)
         print(selected_option)
-        self.close()
         if selected_option == "Show Statistics":
-            print("Sup")
-            # show_statistics()  # If user chose 1, call the view_charts() function.
+            self.close()
+            show_statistics()  # If user chose 1, call the view_charts() function.
         else:
             self.display_label.setText(f"Selected Option: {selected_option}")
 
@@ -41,7 +40,6 @@ def startApp():
     window = MyWindow()
     window.show()
     app.exec_()
-    print("Hi")
 
 import numpy as np
 import csv
@@ -115,6 +113,7 @@ def show_statistics():
     most_year = b[np.where(b == maximum)[0], 0][0]
     print("The highest was {maximum} in {most_year}.".format(maximum=maximum, most_year=most_year))
     custom_range_avg(int(stats_input))  # Call the function to calculate the average for a custom range of years.
+    return
 
 def custom_range_avg(selected_type):
     # Function to calculate the average of a custom range of years for a specific vehicle type.

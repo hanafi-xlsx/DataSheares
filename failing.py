@@ -1,6 +1,6 @@
 import numpy as np
 import csv
-import os
+from os import system, name
 from time import sleep
 # import call method from subprocess module
 from subprocess import call
@@ -9,8 +9,13 @@ import math
 
 # define clear function
 def clear():
-    # check and make call for specific operating system
-    _ = call('clear' if os.name == 'posix' else 'cls')
+    # for windows 
+    if name == 'nt': 
+        _ = system('cls') 
+
+    # for mac and linux(here, os.name is 'posix') 
+    else: 
+        _ = system('clear') 
 
 def loadCSVData(fname):
     # Function to load CSV data from the given file name and return it as a li5st of lists.
@@ -75,20 +80,51 @@ def main_menu():
 
 # Function to display charts
 def view_charts():
+    print("You selected 'view charts'.")  
     figure, axis = plt.subplots(2,1)
+    opacity = 0.5
+    error_config = {'ecolor': '0.3'}
+    color = 'r'
 
     # Average number of bus passengers per bus vs year as a line plot
-    xpoints = b[:,0]
-    ypoints = b[:,1]/b[:,2]
-    heading_font = {'family':'sans','color':'black','size':15}
+    xpoints_line = b[:,0]
+    ypoints_line = b[:,1]/b[:,2]
+    heading_font = {'family':'sans','color':'black','size': 15}
     axis[0].grid(axis = 'x')
     axis[0].set_title("Avg. pax per bus over the years", fontdict = heading_font)
-    axis[0].plot(xpoints, ypoints, color='r', marker='s', linestyle="dashed", linewidth='3.2')
+    axis[0].plot(xpoints_line, ypoints_line, 
+                 color=color, 
+                 alpha=opacity, 
+                 marker='s', 
+                 linestyle="dashed", 
+                 linewidth='3.2')
 
     # Number of personal vehicles vs year as a bar chart
-    
+    xpoints_bar = b[:,0]
+    ypoints_bar = b[:,3]
+    bar_width = 0.7
+    bar_limit=[800000,1200000]
+    axis[1].set_title("No. of personal vehicles over the years", fontdict = heading_font)
+    axis[1].bar(xpoints_bar, ypoints_bar, bar_width,
+                 alpha=opacity,
+                 color=color,
+                 error_kw=error_config,)
+    axis[1].set(ylim=bar_limit)
+    # using padding
+    figure.tight_layout(pad=3.0)
     plt.show()
-    print("You selected 'view charts'.")  # Placeholder message for chart view (to be implemented).
+
+    print("\nWhat do you want to do? \n1. Show statistics\n2. Main menu\n3. Quit the program\n")
+    view_charts_input = input_validation("Give your selection here: ", 3) # Take user input 
+    match(view_charts_input):
+        case(1):
+            clear()
+            show_statistics()
+        case(2):
+            clear()
+            main_menu()
+        case(3):
+            quit_program()
 
 def show_statistics():
     print("You selected 'show statistics'.\n")

@@ -4,9 +4,7 @@ from os import system, name
 from time import sleep
 import matplotlib.pyplot as plt
 
-invalid_input = "Please give a valid input."
-quit_message = "Thanks for using this program."
-generic_input_message = "Give your selection here: "
+invalid_input, quit_message, generic_input_message = "Please give a valid input.", "Thanks for using this program.", "Give your selection here: "
 
 # define clear function
 def clear():
@@ -18,24 +16,21 @@ def clear():
     else: 
         _ = system('clear') 
 
-def load_csv_data(fname):
+def load_csv_data(fname:str) -> list:
     # Function to load CSV data from the given file name and return it as a li5st of lists.
-    datalist = []  # Initialize an empty list to store the data.
     openfile = open(fname)  # Open the file with the given file name.
     csvreader = csv.reader(openfile)  # Create a CSV reader object to read the file.
-
-    for row in csvreader:  # Loop through each row in the CSV file.
-        datalist.append(row)  # Append each row to the datalist.
+    datalist = [row for row in csvreader]  # Initialize an empty list to store the data.
     return datalist  # Return the final list of lists containing the CSV data.
 
-array_raw = np.array(load_csv_data("brdrxingusc_dataset.csv")) # Load the CSV file into a NumPy array called 'a'.
+array_raw = np.array(load_csv_data("brdrxingusc_dataset.csv")) # Load the CSV file into a NumPy array called 'array_raw'.
 types = array_raw[1:,0]  # Define a list of vehicle types.
 
-# Remove the 'types' column and transpose the table, so rows represent years and columns represent types.
+# Remove the 'types' column and transpose the array, so rows represent years and columns represent types.
 array_clean = np.array(array_raw.T[1:,], dtype=np.int32)
 
 
-def list_items(items):
+def list_items(items:list) -> str:
     list_length = len(items)
     match(list_length):
         case(1):
@@ -47,28 +42,29 @@ def list_items(items):
             result = ', '.join(str(item) for item in items[:-1])    
             return result + ', and ' + str(items[-1])
 
-def input_validation(message:str, stop:int, start:int = 1):
+def input_validation(message:str, stop:int, start:int = 1) -> int:
     num = 0
     while True:
         try:
             num = int(input(message))
         except ValueError:
-            print("Please enter a valid integer from {} to {}".format(start, stop))
+            print(f"Please enter a valid integer from {start} to {stop}")
             continue
         if num >= start and num <= stop:
             print(f'You entered: {num}')
             return num
         else:
-            print('The integer must be in the range {}-{}'.format(start, stop))
+            print(f'The integer must be in the range {start}-{stop}')
 
 def get_stats(array:np.ndarray, type:str):
-    mean = array[:,1].mean()
-    max_value = array.max()
-    max_year = array[np.where(array == max_value)[0], 0][0]
+    mean, max_value = array[:,1].mean(), array.max()
+    max_year  = array[np.where(array == max_value)[0], 0][0]
     values_above_avg = list_items(array[np.where(array[:,1] > mean), 0][0])
-    print("The average number of {} from {} to {} is {:d}".format(type.lower(), array[0,0], array[-1,0], int(mean)))
-    print("The number of {} were higher than average in these years: {}".format(type.lower(), values_above_avg))
-    print("The highest was {value} in {year}.".format(value=max_value, year=max_year))
+    print(f'''
+    The average number of {type.lower()} from {array[0,0]} to {array[-1,0]} is {round(mean):d}
+    The number of {type.lower()} were higher than average in these years: {values_above_avg}
+    The highest was {max_value} in {max_year}.
+    ''')
 
 def go_to_main_menu():
     print("Going to main menu...")
@@ -83,7 +79,13 @@ def quit_program():
 def main_menu():
     clear()
     # Function to display the main menu and handle user choices.
-    print("Main menu:\n\nSelect your choice:\n1. View charts\n2. Show statistics\n3. Quit program\n")
+    print(f'''
+    Main menu
+    Select your choice:
+    1. View charts
+    2. Show statistics
+    3. Quit program
+    ''')
     menu_input = input_validation(generic_input_message, 3)
     match(menu_input):
         case(1):
@@ -98,14 +100,10 @@ def view_charts():
     clear()
     print("You selected 'view charts'.")  
     figure, axis = plt.subplots(2,1)
-    opacity = 0.5
-    error_config = {'ecolor': '0.3'}
-    color = 'r'
+    opacity, error_config, color = 0.5, {'ecolor': '0.3'}, 'r'
 
     # Average number of bus passengers per bus vs year as a line plot
-    xpoints_line = array_clean[:,0]
-    ypoints_line = array_clean[:,1]/array_clean[:,2]
-    heading_font = {'family':'sans','color':'black','size': 15}
+    xpoints_line, ypoints_line, heading_font = array_clean[:,0], array_clean[:,1]/array_clean[:,2], {'family':'sans','color':'black','size': 15}
     axis[0].grid(axis = 'x')
     axis[0].set_title("Avg. pax per bus over the years", fontdict = heading_font)
     axis[0].plot(xpoints_line, ypoints_line, 
@@ -116,10 +114,7 @@ def view_charts():
                  linewidth='3.2')
 
     # Number of personal vehicles vs year as a bar chart
-    xpoints_bar = array_clean[:,0]
-    ypoints_bar = array_clean[:,3]
-    bar_width = 0.7
-    bar_limit=[800000,1200000]
+    xpoints_bar, ypoints_bar, bar_width, bar_limit = array_clean[:,0], array_clean[:,3], 0.7, [800000,1200000]
     axis[1].set_title("No. of personal vehicles over the years", fontdict = heading_font)
     axis[1].bar(xpoints_bar, ypoints_bar, bar_width,
                  alpha=opacity,
@@ -131,7 +126,12 @@ def view_charts():
     figure.tight_layout(pad=3.0)
     plt.show()
 
-    print("\nWhat do you want to do? \n1. Show statistics\n2. Main menu\n3. Quit the program\n")
+    print('''
+    What do you want to do?
+        1. Show statistics
+        2. Main menu
+        3. Quit the program
+          ''')
     view_charts_input = input_validation(generic_input_message, 3) # Take user input 
     
     match(view_charts_input):
@@ -148,51 +148,57 @@ def show_statistics():
     
     # Function to show statistics based on user-selected vehicle type.
     print("Select a type:")
-    for i in range(len(types)):
-        print("{}. {}".format(i+1, types[i]))
+    for idx, type in enumerate(types):
+        print(f"{idx+1}. {type}")
     
     input_type_index = input_validation(generic_input_message, len(types)) # Take user input for the type selection.
     
-    selected_type_string = types[int(input_type_index)-1]  # Get the selected vehicle type based on user input. e.g.: 'buses', 'loaded trucks'
-    selected_type_array = array_clean[:, [0,int(input_type_index)]]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
+    selected_type_string, selected_type_array = types[input_type_index-1], array_clean[:, [0,input_type_index]]
     
     clear()
-    print("You selected '{}'\n".format(selected_type_string))
+    print(f"You selected '{selected_type_string}'")
     get_stats(selected_type_array, selected_type_string)
-    custom_range_avg(int(input_type_index))  # Call the custom_range_avg function
+    custom_range_avg(input_type_index)  # Call the custom_range_avg function
 
 def custom_range_avg(selected_type_index:int):
     # Function to calculate the average of a custom range of years for a specific vehicle type.
-    print("\nWhat do you want to do? \n1. Show statistics for {} in custom range of years\n2. See the number of {} in a specific year\n3. Back to the main menu\n4. Quit the program\n".format(types[selected_type_index-1].lower(),types[selected_type_index-1].lower()))
+    print(f'''
+    What do you want to do? 
+    1. Show statistics for {types[selected_type_index-1].lower()} in custom range of years
+    2. See the number of {types[selected_type_index-1].lower()} in a specific year
+    3. Back to the main menu
+    4. Quit the program
+    ''')
     custom_range_input = input_validation(generic_input_message, 4) # Take user input for the custom range choice.
-    
-    selected_type_string = types[int(selected_type_index)-1]
+    selected_type_string = types[selected_type_index-1]
 
     match(custom_range_input):
         case(1):
             clear()
-            print("You selected 'Show statistics for {} in custom range of years'.\n".format(selected_type_string))
+            print(f"You selected 'Show statistics for {selected_type_string} in custom range of years'.\n")
 
-            print("Please give the start year (between {} to {}): ".format(array_clean[0,0], array_clean[-1,0]-1)) # Take user input for the start year.
+            print(f"Please give the start year (between {array_clean[0,0]} to {array_clean[-1,0]-1}): ") # Take user input for the start year.
             start = input_validation("Enter start year: ", array_clean[-1,0]-1, array_clean[0,0])
             
-            print("Please give the end year (between {start} to {end_year}, end year will not be included in the average): ".format(start=start+1, end_year=array_clean[-1,0]))  # Take user input for the end year.
+            print(f"Please give the end year (between {start+1} to {array_clean[-1,0]},"
+                  " end year will be included in the average): ")  # Take user input for the end year.
             end = input_validation("Enter end year: ", array_clean[-1,0], start+1)
             
-            custom_filter = array_clean[abs(start) % 100:abs(end) % 100, [0,selected_type_index]]
+            custom_filter = array_clean[abs(start) % 100:abs(end+1) % 100, [0,selected_type_index]]
             clear()
             get_stats(custom_filter, selected_type_string)
             custom_range_avg(selected_type_index)
         case(2):
             clear()
-            print("You selected: 'See the number of {} in a specific year'.\n".format(types[selected_type_index-1].lower()))
+            print(f"You selected: 'See the number of {types[selected_type_index-1].lower()} in a specific year'.\n")
 
-            print("Give the year you want to view, from {} to {}: ".format(array_clean[0,0], array_clean[-1,0]))
+            print(f"Give the year you want to view, from {array_clean[0,0]} to {array_clean[-1,0]}: ")
             chosen_year = input_validation("Select your year: ", array_clean[-1,0], array_clean[0,0])
-            chosen_index = int(chosen_year)%100
+            chosen_index = chosen_year%100
 
             clear()
-            print("There was {} {} in {}.".format(array_clean[chosen_index,selected_type_index], types[selected_type_index-1].lower(), chosen_year))
+            print(f"There was {array_clean[chosen_index,selected_type_index]} {types[selected_type_index-1].lower()}"
+                  f" in {chosen_year}.")
             custom_range_avg(selected_type_index)
         case(3):
             go_to_main_menu()  # Go back to the main menu.

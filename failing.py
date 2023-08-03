@@ -2,10 +2,7 @@ import numpy as np
 import csv
 from os import system, name
 from time import sleep
-# import call method from subprocess module
-from subprocess import call
 import matplotlib.pyplot as plt
-import math
 
 # define clear function
 def clear():
@@ -17,7 +14,7 @@ def clear():
     else: 
         _ = system('clear') 
 
-def loadCSVData(fname):
+def load_csv_data(fname):
     # Function to load CSV data from the given file name and return it as a li5st of lists.
     datalist = []  # Initialize an empty list to store the data.
     openfile = open(fname)  # Open the file with the given file name.
@@ -26,19 +23,27 @@ def loadCSVData(fname):
         datalist.append(row)  # Append each row to the datalist.
     return datalist  # Return the final list of lists containing the CSV data.
 
-a = np.array(loadCSVData("brdrxingusc_dataset.csv")) # Load the CSV file into a NumPy array called 'a'.
+array_raw = np.array(load_csv_data("brdrxingusc_dataset.csv")) # Load the CSV file into a NumPy array called 'a'.
 
 # Remove the 'types' column and transpose the table, so rows represent years and columns represent types.
-b = np.array(a.T[1:,], dtype=np.int32)
+array_clean = np.array(array_raw.T[1:,], dtype=np.int32)
 
 invalid_input = "Please give a valid input."
 quit_message = "Thanks for using this program."
-types = a[1:,0]  # Define a list of vehicle types.
+types = array_raw[1:,0]  # Define a list of vehicle types.
 generic_input_message = "Give your selection here: "
 
 def list_items(items):
-    result = ', '.join(str(item) for item in items[:-1])
-    return result + ', and ' + str(items[-1])
+    list_length = len(items)
+    match(list_length):
+        case(1):
+            return items[0]
+        case(2):
+            result = str(items[0]) + " and " + str(items[1])
+            return result
+        case _:
+            result = ', '.join(str(item) for item in items[:-1])    
+            return result + ', and ' + str(items[-1])
 
 def input_validation(message:str, stop:int, start:int = 1):
     num = 0
@@ -53,7 +58,15 @@ def input_validation(message:str, stop:int, start:int = 1):
             return num
         else:
             print('The integer must be in the range {}-{}'.format(start, stop))
-    
+
+def get_stats(array:np.ndarray, type:str):
+    mean = array[:,1].mean()
+    max_value = array.max()
+    max_year = array[np.where(array == max_value)[0], 0][0]
+    values_above_avg = list_items(array[np.where(array[:,1] > mean), 0][0])
+    print("The average number of {} from {} to {} is {:d}".format(type.lower(), array[0,0], array[-1,0], int(mean)))
+    print("The number of {} were higher than average in these years: {}".format(type.lower(), values_above_avg))
+    print("The highest was {value} in {year}.".format(value=max_value, year=max_year))
 
 def go_to_main_menu():
     print("Going to main menu...")
@@ -88,8 +101,8 @@ def view_charts():
     color = 'r'
 
     # Average number of bus passengers per bus vs year as a line plot
-    xpoints_line = b[:,0]
-    ypoints_line = b[:,1]/b[:,2]
+    xpoints_line = array_clean[:,0]
+    ypoints_line = array_clean[:,1]/array_clean[:,2]
     heading_font = {'family':'sans','color':'black','size': 15}
     axis[0].grid(axis = 'x')
     axis[0].set_title("Avg. pax per bus over the years", fontdict = heading_font)
@@ -101,8 +114,8 @@ def view_charts():
                  linewidth='3.2')
 
     # Number of personal vehicles vs year as a bar chart
-    xpoints_bar = b[:,0]
-    ypoints_bar = b[:,3]
+    xpoints_bar = array_clean[:,0]
+    ypoints_bar = array_clean[:,3]
     bar_width = 0.7
     bar_limit=[800000,1200000]
     axis[1].set_title("No. of personal vehicles over the years", fontdict = heading_font)
@@ -133,51 +146,40 @@ def show_statistics():
     print("Select a type:")
     for i in range(len(types)):
         print("{}. {}".format(i+1, types[i]))
-    stats_input = input_validation(generic_input_message, len(types)) # Take user input for the type selection.
-    selected_type = types[int(stats_input)-1]  # Get the selected vehicle type based on user input. e.g.: 'buses', 'loaded trucks'
-    selected_type_all_years = b[:, int(stats_input)]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
-    selected_average = np.mean(selected_type_all_years)  # Calculate the average of the selected vehicle type. 
+    input_type_index = input_validation(generic_input_message, len(types)) # Take user input for the type selection.
+    selected_type_string = types[int(input_type_index)-1]  # Get the selected vehicle type based on user input. e.g.: 'buses', 'loaded trucks'
+    selected_type_array = array_clean[:, [0,int(input_type_index)]]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
     clear()
-    print("You selected '{}'\n".format(selected_type))
-    print("Mean number of {types} from {start_year} to {end_year} is {mean}".format(types=selected_type.lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
+    print("You selected '{}'\n".format(selected_type_string))
+    get_stats(selected_type_array, selected_type_string)
+    custom_range_avg(int(input_type_index))  # Call the custom_range_avg function
 
-    # Find years where the number of types was higher than the average.
-    x = np.where(selected_type_all_years > selected_average)
-    print("The number of {types} were higher than average in these years:".format(types=selected_type.lower()), end=" ")
-    print(list_items(b[x, 0][0]))
-
-    # Find the maximum number of vehicles and the year when it occurred.
-    maximum = selected_type_all_years.max()
-    most_year = b[np.where(b == maximum)[0], 0][0]
-    print("The highest was {maximum} in {most_year}.".format(maximum=maximum, most_year=most_year))
-    custom_range_avg(int(stats_input))  # Call the function to calculate the average for a custom range of years.
-
-def custom_range_avg(selected_type:int):
+def custom_range_avg(selected_type_index:int):
     # Function to calculate the average of a custom range of years for a specific vehicle type.
-    print("\nWhat do you want to do? \n1. Find the average of {} in custom range of years\n2. See the number of {} in a specific year\n3. Back to the main menu\n4. Quit the program\n".format(types[selected_type-1].lower(),types[selected_type-1].lower()))
+    print("\nWhat do you want to do? \n1. Show statistics for {} in custom range of years\n2. See the number of {} in a specific year\n3. Back to the main menu\n4. Quit the program\n".format(types[selected_type_index-1].lower(),types[selected_type_index-1].lower()))
     custom_range_input = input_validation(generic_input_message, 4) # Take user input for the custom range choice.
+    selected_type_string = types[int(selected_type_index)-1]
     match(custom_range_input):
         case(1):
             clear()
-            print("You selected 'Find the average of {} in custom range of years'.\n".format(types[selected_type-1].lower()))
-            print("Please give the start year (between {} to {}): ".format(b[0,0], b[-1,0]-1)) # Take user input for the start year.
-            start = input_validation("Enter start year: ", b[-1,0]-1, b[0,0])
-            print("Please give the end year (between {start} to {end_year}, end year will not be included in the average): ".format(start=start+1, end_year=b[-1,0]))  # Take user input for the end year.
-            end = input_validation("Enter end year: ", b[-1,0], start+1)
-            # Calculate the average number of vehicles for the custom range of years.
-            custom_filter = np.mean(b[abs(start) % 100:abs(end) % 100, selected_type])
+            print("You selected 'Show statistics for {} in custom range of years'.\n".format(selected_type_string))
+            print("Please give the start year (between {} to {}): ".format(array_clean[0,0], array_clean[-1,0]-1)) # Take user input for the start year.
+            start = input_validation("Enter start year: ", array_clean[-1,0]-1, array_clean[0,0])
+            print("Please give the end year (between {start} to {end_year}, end year will not be included in the average): ".format(start=start+1, end_year=array_clean[-1,0]))  # Take user input for the end year.
+            end = input_validation("Enter end year: ", array_clean[-1,0], start+1)
+            custom_filter = array_clean[abs(start) % 100:abs(end) % 100, [0,selected_type_index]]
             clear()
-            print("The average number of {} from {} to {} is {:d}".format(types[selected_type-1].lower(), start, end, int(custom_filter)))
-            custom_range_avg(selected_type)  # Call the function again to continue or choose another option.
+            get_stats(custom_filter, selected_type_string)
+            custom_range_avg(selected_type_index)
         case(2):
             clear()
-            print("You selected: 'See the number of {} in a specific year'.\n".format(types[selected_type-1].lower()))
-            print("Give the year you want to view, from {} to {}: ".format(b[0,0], b[-1,0]))
-            chosen_year = input_validation("Select your year: ", b[-1,0], b[0,0])
+            print("You selected: 'See the number of {} in a specific year'.\n".format(types[selected_type_index-1].lower()))
+            print("Give the year you want to view, from {} to {}: ".format(array_clean[0,0], array_clean[-1,0]))
+            chosen_year = input_validation("Select your year: ", array_clean[-1,0], array_clean[0,0])
             chosen_index = int(chosen_year)%100
             clear()
-            print("There was {} {} in {}.".format(b[chosen_index,selected_type], types[selected_type-1].lower(), chosen_year))
-            custom_range_avg(selected_type)
+            print("There was {} {} in {}.".format(array_clean[chosen_index,selected_type_index], types[selected_type_index-1].lower(), chosen_year))
+            custom_range_avg(selected_type_index)
         case(3):
             clear()
             go_to_main_menu()  # Go back to the main menu.

@@ -79,7 +79,7 @@ def quit_program():
 def main_menu():
     clear()
     # Function to display the main menu and handle user choices.
-    print(f'''
+    print('''
     Main menu
     Select your choice:
     1. View charts

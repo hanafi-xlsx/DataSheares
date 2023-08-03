@@ -4,6 +4,10 @@ from os import system, name
 from time import sleep
 import matplotlib.pyplot as plt
 
+invalid_input = "Please give a valid input."
+quit_message = "Thanks for using this program."
+generic_input_message = "Give your selection here: "
+
 # define clear function
 def clear():
     # for windows 
@@ -19,19 +23,17 @@ def load_csv_data(fname):
     datalist = []  # Initialize an empty list to store the data.
     openfile = open(fname)  # Open the file with the given file name.
     csvreader = csv.reader(openfile)  # Create a CSV reader object to read the file.
+
     for row in csvreader:  # Loop through each row in the CSV file.
         datalist.append(row)  # Append each row to the datalist.
     return datalist  # Return the final list of lists containing the CSV data.
 
 array_raw = np.array(load_csv_data("brdrxingusc_dataset.csv")) # Load the CSV file into a NumPy array called 'a'.
+types = array_raw[1:,0]  # Define a list of vehicle types.
 
 # Remove the 'types' column and transpose the table, so rows represent years and columns represent types.
 array_clean = np.array(array_raw.T[1:,], dtype=np.int32)
 
-invalid_input = "Please give a valid input."
-quit_message = "Thanks for using this program."
-types = array_raw[1:,0]  # Define a list of vehicle types.
-generic_input_message = "Give your selection here: "
 
 def list_items(items):
     list_length = len(items)
@@ -79,21 +81,21 @@ def quit_program():
     print("Thanks for using DataSheares!")
 
 def main_menu():
+    clear()
     # Function to display the main menu and handle user choices.
     print("Main menu:\n\nSelect your choice:\n1. View charts\n2. Show statistics\n3. Quit program\n")
     menu_input = input_validation(generic_input_message, 3)
     match(menu_input):
         case(1):
-            clear()
             view_charts()  # If user chose 1, call the view_charts() function.
         case(2):
-            clear()
             show_statistics()  # If user chose 2, call the show_statistics() function.
         case(3):
             quit_program()  # If user chose 3, print the quit message.
 
 # Function to display charts
 def view_charts():
+    clear()
     print("You selected 'view charts'.")  
     figure, axis = plt.subplots(2,1)
     opacity = 0.5
@@ -124,31 +126,36 @@ def view_charts():
                  color=color,
                  error_kw=error_config,)
     axis[1].set(ylim=bar_limit)
+
     # using padding
     figure.tight_layout(pad=3.0)
     plt.show()
 
     print("\nWhat do you want to do? \n1. Show statistics\n2. Main menu\n3. Quit the program\n")
     view_charts_input = input_validation(generic_input_message, 3) # Take user input 
+    
     match(view_charts_input):
         case(1):
-            clear()
             show_statistics()
         case(2):
-            clear()
             main_menu()
         case(3):
             quit_program()
 
 def show_statistics():
+    clear()
     print("You selected 'show statistics'.\n")
+    
     # Function to show statistics based on user-selected vehicle type.
     print("Select a type:")
     for i in range(len(types)):
         print("{}. {}".format(i+1, types[i]))
+    
     input_type_index = input_validation(generic_input_message, len(types)) # Take user input for the type selection.
+    
     selected_type_string = types[int(input_type_index)-1]  # Get the selected vehicle type based on user input. e.g.: 'buses', 'loaded trucks'
     selected_type_array = array_clean[:, [0,int(input_type_index)]]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
+    
     clear()
     print("You selected '{}'\n".format(selected_type_string))
     get_stats(selected_type_array, selected_type_string)
@@ -158,15 +165,20 @@ def custom_range_avg(selected_type_index:int):
     # Function to calculate the average of a custom range of years for a specific vehicle type.
     print("\nWhat do you want to do? \n1. Show statistics for {} in custom range of years\n2. See the number of {} in a specific year\n3. Back to the main menu\n4. Quit the program\n".format(types[selected_type_index-1].lower(),types[selected_type_index-1].lower()))
     custom_range_input = input_validation(generic_input_message, 4) # Take user input for the custom range choice.
+    
     selected_type_string = types[int(selected_type_index)-1]
+
     match(custom_range_input):
         case(1):
             clear()
             print("You selected 'Show statistics for {} in custom range of years'.\n".format(selected_type_string))
+
             print("Please give the start year (between {} to {}): ".format(array_clean[0,0], array_clean[-1,0]-1)) # Take user input for the start year.
             start = input_validation("Enter start year: ", array_clean[-1,0]-1, array_clean[0,0])
+            
             print("Please give the end year (between {start} to {end_year}, end year will not be included in the average): ".format(start=start+1, end_year=array_clean[-1,0]))  # Take user input for the end year.
             end = input_validation("Enter end year: ", array_clean[-1,0], start+1)
+            
             custom_filter = array_clean[abs(start) % 100:abs(end) % 100, [0,selected_type_index]]
             clear()
             get_stats(custom_filter, selected_type_string)
@@ -174,14 +186,15 @@ def custom_range_avg(selected_type_index:int):
         case(2):
             clear()
             print("You selected: 'See the number of {} in a specific year'.\n".format(types[selected_type_index-1].lower()))
+
             print("Give the year you want to view, from {} to {}: ".format(array_clean[0,0], array_clean[-1,0]))
             chosen_year = input_validation("Select your year: ", array_clean[-1,0], array_clean[0,0])
             chosen_index = int(chosen_year)%100
+
             clear()
             print("There was {} {} in {}.".format(array_clean[chosen_index,selected_type_index], types[selected_type_index-1].lower(), chosen_year))
             custom_range_avg(selected_type_index)
         case(3):
-            clear()
             go_to_main_menu()  # Go back to the main menu.
         case(4):
             quit_program()  # Quit the program.

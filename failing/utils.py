@@ -26,24 +26,6 @@ def clear():
         _ = system('clear') 
 
 """
-this function creates a list in proper English when given a list of items
-
-:param items:   a list of items e.g.: [2001, 2002, 2004]
-:return:        the given list in proper English e.g.: '2001, 2002 and 2004'
-"""
-def list_items(items:list) -> str:
-    list_length = len(items)
-    match(list_length):
-        case(1):
-            return items[0]
-        case(2):
-            result = str(items[0]) + " and " + str(items[1])
-            return result
-        case _:
-            result = ', '.join(str(item) for item in items[:-1])    
-            return result + ', and ' + str(items[-1])
-
-"""
 input_validation() handles input validation for all inputs in this program
 
 :param message: string for input message

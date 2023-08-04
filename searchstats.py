@@ -10,39 +10,37 @@ class MyWindow(QMainWindow):
 
         self.setWindowTitle("Search Statistics")
         self.central_widget = QWidget()
+        self.central_widget.setContentsMargins(0, 0, 0, 0)
         self.setCentralWidget(self.central_widget)
         self.layout = QVBoxLayout()
         self.central_widget.setLayout(self.layout)
 
-        type_group = QVBoxLayout()
-        self.label = QLabel("Select a type from the table:")
-        type_group.addWidget(self.label, alignment=Qt.AlignCenter)
-        self.type_combo_box = QComboBox(self)
+        type_group = QHBoxLayout()
+        label = QLabel("Select a type from the table:", self)
+        type_group.addWidget(label, alignment=Qt.AlignRight)
+        type_combo_box = QComboBox(self)
         for ele in type_array:
-            self.type_combo_box.addItem(ele)
-        self.type_combo_box.currentIndexChanged.connect(self.type_selected)
-        self.type_combo_box.setFixedWidth(200)
-        type_group.addWidget(self.type_combo_box, alignment=Qt.AlignCenter)
+            type_combo_box.addItem(ele)
+        type_combo_box.currentIndexChanged.connect(self.type_selected)
+        type_group.addWidget(type_combo_box, alignment=Qt.AlignLeft)
         self.layout.addLayout(type_group)
-
-        self.labels_layout = QVBoxLayout()
+        
         selected_type_all_years = b[:, 1]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
         selected_average = np.mean(selected_type_all_years)  # Calculate the average of the selected vehicle type. 
-        self.mean_label = QLabel("Mean number of {types} from {start_year} to {end_year} is {mean}".format(types=type_array[0].lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
-        self.labels_layout.addWidget(self.mean_label, alignment=Qt.AlignCenter)
+        self.mean_label = QLabel("MEAN count: {start_year} to {end_year} is {mean} {types}".format(types=type_array[0].lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
+        self.layout.addWidget(self.mean_label, alignment=Qt.AlignLeft)
         x = np.where(selected_type_all_years > selected_average)
-        years = list_items(b[x, 0][0])
-        # self.higher_label = QLabel("The number of {types} were higher than average in these years: {years}".format(types=type_array[0].lower(), years=years))
-        # self.labels_layout.addWidget(self.higher_label, alignment=Qt.AlignCenter)
+        years = list_items(b[x, 0][0])   
+        self.higher_label = QLabel("Years where HIGHER than average: {years}".format(types=type_array[0].lower(), years=years))
+        self.layout.addWidget(self.higher_label, alignment=Qt.AlignLeft)
         maximum = selected_type_all_years.max()
         most_year = b[np.where(b == maximum)[0], 0][0]
-        self.highest_label = QLabel("The highest was {maximum} in {most_year}.".format(maximum=maximum, most_year=most_year))
-        self.labels_layout.addWidget(self.highest_label, alignment=Qt.AlignCenter)
-        self.layout.addLayout(self.labels_layout)
+        self.highest_label = QLabel("Years where HIGHEST average: {maximum} {types} in {most_year}.".format(maximum=maximum, most_year=most_year, types=type_array[0].lower()))
+        self.layout.addWidget(self.highest_label, alignment=Qt.AlignLeft)
 
-        year_group = QVBoxLayout()
+        self.year_group = QHBoxLayout()
         self.label = QLabel("Select the year you would like:")
-        year_group.addWidget(self.label, alignment=Qt.AlignCenter)
+        self.year_group.addWidget(self.label, alignment=Qt.AlignRight)
         self.year_combo_box = QComboBox(self)
         year_array = np.array(b[:,0])
         year_list = year_array.tolist()
@@ -50,12 +48,11 @@ class MyWindow(QMainWindow):
         years_array = years.split()
         for ele in years_array:
             self.year_combo_box.addItem(ele)
-        self.year_combo_box.setFixedWidth(200)
-        year_group.addWidget(self.year_combo_box, alignment=Qt.AlignCenter)
-        self.layout.addLayout(year_group)
+        self.year_group.addWidget(self.year_combo_box, alignment=Qt.AlignLeft)
+        self.layout.addLayout(self.year_group)
 
         self.display_label = QLabel("Display Area")
-        self.layout.addWidget(self.display_label, alignment=Qt.AlignCenter)
+        self.layout.addWidget(self.display_label, alignment=Qt.AlignLeft)
 
         self.menu_button = QPushButton("Main Menu", self)
         self.menu_button.setFixedWidth(200)
@@ -71,12 +68,12 @@ class MyWindow(QMainWindow):
         selected_column = type_array.index(selected_option)
         selected_type_all_years = b[:, int(selected_column)]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
         selected_average = np.mean(selected_type_all_years)  # Calculate the average of the selected vehicle type. 
-        self.mean_label.setText("Mean number of {types} from {start_year} to {end_year} is {mean}".format(types=selected_option.lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
+        self.mean_label.setText("MEAN count: {start_year} to {end_year} is {mean} {types}".format(types=selected_option.lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
         x = np.where(selected_type_all_years > selected_average)
-        self.higher_label.setText("The number of {types} were higher than average in these years: ".format(types=selected_option.lower()) + list_items(b[x, 0][0]))
+        self.higher_label.setText("Years where HIGHER than average: " + list_items(b[x, 0][0]))
         maximum = selected_type_all_years.max()
         most_year = b[np.where(b == maximum)[0], 0][0]
-        self.highest_label.setText("The highest was {maximum} in {most_year}.".format(maximum=maximum, most_year=most_year))
+        self.highest_label.setText("Years where HIGHEST average: {maximum} {types} in {most_year}.".format(maximum=maximum, types=selected_option.lower(), most_year=most_year))
 
 def list_items(items):
     result = ', '.join(str(item) for item in items[:-1])

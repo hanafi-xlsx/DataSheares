@@ -1,6 +1,6 @@
 import sys
-import mainmenu
-import searchstats
+import mainmenu as mainmenu
+import searchstats as searchstats
 
 def dataSheares():
     menu = ["Display Table", "View Charts", "Search Statistics"]

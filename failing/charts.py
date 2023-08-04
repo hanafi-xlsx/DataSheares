@@ -2,26 +2,30 @@ import matplotlib.pyplot as plt
 from utils import clear, input_validation
 import numpy as np
 
+heading_font = {'family':'sans','color':'black','size': 15}
+opacity, error_config, color = 0.5, {'ecolor': '0.3'}, 'r'
+marker, linestyle, linewidth = "s", "dashed", "3.2"
+bar_width = 0.7
+
 """
 assignment_charts() shows the required statistics that fulfills the assignment specifications
 """
 def assignment_charts(array: np.ndarray):
     figure, axis = plt.subplots(2,1)
-    opacity, error_config, color = 0.5, {'ecolor': '0.3'}, 'r'
 
     # Average number of bus passengers per bus vs year as a line plot
-    xpoints_line, ypoints_line, heading_font = array[:,0], array[:,1]/array[:,2], {'family':'sans','color':'black','size': 15}
+    xpoints_line, ypoints_line, = array[:,0], array[:,1]/array[:,2]
     axis[0].grid(axis = 'x')
     axis[0].set_title("Avg. pax per bus over the years", fontdict = heading_font)
     axis[0].plot(xpoints_line, ypoints_line, 
                 color=color, 
                 alpha=opacity, 
-                marker='s', 
-                linestyle="dashed", 
-                linewidth='3.2')
+                marker=marker, 
+                linestyle=linestyle, 
+                linewidth=linewidth)
 
     # Number of personal vehicles vs year as a bar chart
-    xpoints_bar, ypoints_bar, bar_width, bar_limit = array[:,0], array[:,3], 0.7, [800000,1200000]
+    xpoints_bar, ypoints_bar, bar_limit = array[:,0], array[:,3], [800000,1200000]
     axis[1].set_title("No. of personal vehicles over the years", fontdict = heading_font)
     axis[1].bar(xpoints_bar, ypoints_bar, bar_width,
                 alpha=opacity,
@@ -53,6 +57,7 @@ def dynamic_charts(array: np.ndarray, types: np.ndarray):
         # Chosen: data across the years
         case(1):
             clear()
+            xpoints = array[:,0]
             print("You selected 'Data across the years'")
             print('''
     What kind of data do you want to see? 
@@ -72,6 +77,8 @@ def dynamic_charts(array: np.ndarray, types: np.ndarray):
                     type_index = input_validation(len(types))-1 # Take user input for the type selection.
                     clear()
                     print(f"You selected '{types[type_index]}'\n\n")
+                    ypoints = array[:,type_index+1]
+
                 # Chosen: Bivariate (single-line chart e.g.: Bus passengers per Bus)
                 case(2):
                     clear()

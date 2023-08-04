@@ -1,16 +1,16 @@
 import numpy as np
 import csv
 import sys
-from PyQt5.QtWidgets import QHBoxLayout, QApplication, QMainWindow, QLabel, QComboBox, QVBoxLayout, QWidget, QPushButton
+from PyQt5.QtWidgets import QHBoxLayout, QApplication, QMainWindow, QLabel, QComboBox, QVBoxLayout, QWidget, QPushButton, QGroupBox
 from PyQt5.QtCore import Qt
 
 class MyWindow(QMainWindow):
     def __init__(self, type_array):
         super().__init__()
+        self.setAttribute(Qt.WA_DeleteOnClose)
 
         self.setWindowTitle("Search Statistics")
         self.central_widget = QWidget()
-        self.central_widget.setContentsMargins(0, 0, 0, 0)
         self.setCentralWidget(self.central_widget)
         self.layout = QVBoxLayout()
         self.central_widget.setLayout(self.layout)
@@ -25,18 +25,21 @@ class MyWindow(QMainWindow):
         type_group.addWidget(type_combo_box, alignment=Qt.AlignLeft)
         self.layout.addLayout(type_group)
         
+        group_box = QGroupBox("Assignment Information")
+        group_layout = QVBoxLayout(group_box)
         selected_type_all_years = b[:, 1]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
         selected_average = np.mean(selected_type_all_years)  # Calculate the average of the selected vehicle type. 
-        self.mean_label = QLabel("MEAN count: {start_year} to {end_year} is {mean} {types}".format(types=type_array[0].lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
-        self.layout.addWidget(self.mean_label, alignment=Qt.AlignLeft)
+        self.mean_label = QLabel("MEAN count: ({start_year} - {end_year}){mean} {types}".format(types=type_array[0].lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
+        group_layout.addWidget(self.mean_label, alignment=Qt.AlignLeft)
         x = np.where(selected_type_all_years > selected_average)
-        years = list_items(b[x, 0][0])   
+        years = list_items(b[x, 0][0])
         self.higher_label = QLabel("Years where HIGHER than average: {years}".format(types=type_array[0].lower(), years=years))
-        self.layout.addWidget(self.higher_label, alignment=Qt.AlignLeft)
+        group_layout.addWidget(self.higher_label, alignment=Qt.AlignLeft)
         maximum = selected_type_all_years.max()
         most_year = b[np.where(b == maximum)[0], 0][0]
         self.highest_label = QLabel("Years where HIGHEST average: {maximum} {types} in {most_year}.".format(maximum=maximum, most_year=most_year, types=type_array[0].lower()))
-        self.layout.addWidget(self.highest_label, alignment=Qt.AlignLeft)
+        group_layout.addWidget(self.highest_label, alignment=Qt.AlignLeft)
+        self.layout.addWidget(group_box)
 
         self.year_group = QHBoxLayout()
         self.label = QLabel("Select the year you would like:")
@@ -50,9 +53,6 @@ class MyWindow(QMainWindow):
             self.year_combo_box.addItem(ele)
         self.year_group.addWidget(self.year_combo_box, alignment=Qt.AlignLeft)
         self.layout.addLayout(self.year_group)
-
-        self.display_label = QLabel("Display Area")
-        self.layout.addWidget(self.display_label, alignment=Qt.AlignLeft)
 
         self.menu_button = QPushButton("Main Menu", self)
         self.menu_button.setFixedWidth(200)
@@ -68,7 +68,7 @@ class MyWindow(QMainWindow):
         selected_column = type_array.index(selected_option)
         selected_type_all_years = b[:, int(selected_column)]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
         selected_average = np.mean(selected_type_all_years)  # Calculate the average of the selected vehicle type. 
-        self.mean_label.setText("MEAN count: {start_year} to {end_year} is {mean} {types}".format(types=selected_option.lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
+        self.mean_label.setText("MEAN count: {start_year} - {end_year} is {mean} {types}".format(types=selected_option.lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
         x = np.where(selected_type_all_years > selected_average)
         self.higher_label.setText("Years where HIGHER than average: " + list_items(b[x, 0][0]))
         maximum = selected_type_all_years.max()
@@ -108,29 +108,28 @@ def searchStats():
     window.resize(500,200)
     window.move(700, 250)
     window.show()
-    app.exec_()
-    print(b[:,0])
+    app.exec()
     return
-    selected_option = input("\nGive your selection here: ")  # Take user input for the type selection.
-    selected_type = types[int(selected_option)-1]  # Get the selected vehicle type based on user input. e.g.: 'buses', 'loaded trucks'
-    selected_type_all_years = b[:, int(selected_option)]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
-    selected_average = np.mean(selected_type_all_years)  # Calculate the average of the selected vehicle type. 
-    # clear()
-    print("You selected '{}'\n".format(selected_type))
-    print("Mean number of {types} from {start_year} to {end_year} is {mean}".format(types=selected_type.lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
+    # selected_option = input("\nGive your selection here: ")  # Take user input for the type selection.
+    # selected_type = types[int(selected_option)-1]  # Get the selected vehicle type based on user input. e.g.: 'buses', 'loaded trucks'
+    # selected_type_all_years = b[:, int(selected_option)]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
+    # selected_average = np.mean(selected_type_all_years)  # Calculate the average of the selected vehicle type. 
+    # # clear()
+    # print("You selected '{}'\n".format(selected_type))
+    # print("Mean number of {types} from {start_year} to {end_year} is {mean}".format(types=selected_type.lower(), start_year = b[0,0], end_year = b[-1,0], mean=int(selected_average)))
 
-    # Find years where the number of types was higher than the average.
-    x = np.where(selected_type_all_years > selected_average)
-    print("The number of {types} were higher than average in these years:".format(types=selected_type.lower()), end=" ")
-    for i in b[x, 0][0]:
-        print(i, end=" ")
-    print("")
+    # # Find years where the number of types was higher than the average.
+    # x = np.where(selected_type_all_years > selected_average)
+    # print("The number of {types} were higher than average in these years:".format(types=selected_type.lower()), end=" ")
+    # for i in b[x, 0][0]:
+    #     print(i, end=" ")
+    # print("")
 
-    # Find the maximum number of vehicles and the year when it occurred.
-    maximum = selected_type_all_years.max()
-    most_year = b[np.where(b == maximum)[0], 0][0]
-    print("The highest was {maximum} in {most_year}.".format(maximum=maximum, most_year=most_year))
-    custom_range_avg(int(selected_option))  # Call the function to calculate the average for a custom range of years.
+    # # Find the maximum number of vehicles and the year when it occurred.
+    # maximum = selected_type_all_years.max()
+    # most_year = b[np.where(b == maximum)[0], 0][0]
+    # print("The highest was {maximum} in {most_year}.".format(maximum=maximum, most_year=most_year))
+    # custom_range_avg(int(selected_option))  # Call the function to calculate the average for a custom range of years.
 
 def custom_range_avg(selected_type):
     # Function to calculate the average of a custom range of years for a specific vehicle type.

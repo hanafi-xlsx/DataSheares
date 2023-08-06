@@ -26,14 +26,14 @@ def main_menu():
     print("Welcome to DataSheares. This is the main menu.\n")
 
     main_menu = inquirer.list_input("Select your choice",
-                              choices=['View charts', 'Show statistics', 'Quit program'],
+                              choices=[('View charts',1), ('Show statistics',2), ('Quit program',3)],
                               carousel=True)
     match(main_menu):
-        case('View charts'):
+        case(1):
             view_charts_menu()  # If user chose 1, call the view_charts_menu() function.
-        case('Show statistics'):
+        case(2):
             show_statistics()  # If user chose 2, call the show_statistics() function.
-        case('Quit program'):
+        case(3):
             quit_program()  # If user chose 3, print the quit message.
 
 """
@@ -43,18 +43,18 @@ def view_charts_menu():
     clear()
     print("You selected 'view charts'.\n")  
     charts_menu = inquirer.list_input("What do you want to do?",
-                            choices=['Show assignment charts', 'See your own desired charts', 'Back to the main menu', 'Quit program'],
+                            choices=[('Show assignment charts',1), ('See your own desired charts',2), ('Back to the main menu',3), ('Quit program',4)],
                             carousel=True)
     match(charts_menu):
-        case('Show assignment charts'):
+        case(1):
             assignment_charts(array_clean)
             view_charts_menu()
-        case('See your own desired charts'):
+        case(2):
             dynamic_charts(array_clean, types)
             view_charts_menu()
-        case('Back to the main menu'):
+        case(3):
             main_menu()
-        case('Quit program'):
+        case(4):
             quit_program()
 
 """

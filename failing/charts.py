@@ -1,11 +1,13 @@
 import matplotlib.pyplot as plt
-from utils import clear, input_validation
+from utils import clear
 import numpy as np
+import inquirer
 
 heading_font = {'family':'sans','color':'black','size': 15}
 opacity, error_config, color = 0.5, {'ecolor': '0.3'}, 'r'
 marker, linestyle, linewidth = "s", "dashed", "3.2"
 bar_width = 0.7
+return_message = "Return to view charts menu."
 
 """
 assignment_charts() shows the required statistics that fulfills the assignment specifications
@@ -45,65 +47,57 @@ WORK IN PROGRESS
 def dynamic_charts(array: np.ndarray, types: np.ndarray):
     global type_index
     clear()
-    print("You selected 'See your own desired charts'.")
-    print('''
-    What kind of data do you want to see? 
-    1. Data across the years
-    2. Data for a given year
-    3. Return to view charts menu
-    ''')
-    time_input = input_validation(3)
+    print("You selected 'See your own desired charts'.\n")
+    time_input = inquirer.list_input("What kind of data do you want to see?",
+    choices=[("Data across the years",1),("Data for a given year",2),(return_message,3)],
+    carousel=True)
     match(time_input):
         # Chosen: data across the years
         case(1):
             clear()
             xpoints = array[:,0]
-            print("You selected 'Data across the years'")
-            print('''
-    What kind of data do you want to see? 
-    1. Univariate (bar chart for a single datatype)
-    2. Bivariate (single-line chart e.g.: Bus passengers per Bus)
-    3. Multivariate (multi-line chart)
-    4. Return to view charts menu
-            ''')
-            variable_input = input_validation(4)
+            print("You selected 'Data across the years'\n")
+            variable_input = inquirer.list_input("What kind of data do you want to see?",
+            choices=[("Univariate (bar chart for a single datatype)",1),("Bivariate (single-line chart e.g.: Bus passengers per Bus)",2),("Multivariate (multi-line chart)",3),(return_message,4)],
+            carousel=True)
             match(variable_input):
                 # Chosen: Univariate (bar chart, single type)
                 case(1):
                     clear()
-                    print("You selected 'Univariate (bar chart for a single datatype)'\n\nSelect type:")
-                    for idx, type in enumerate(types):
-                        print(f"{idx+1}. {type}")
-                    type_index = input_validation(len(types))-1 # Take user input for the type selection.
+                    print("You selected 'Univariate (bar chart for a single datatype)'\n")
+                    type_index = inquirer.list_input("Select type",
+                    choices=[(type, idx) for idx, type in enumerate(types)],
+                    carousel=True)
                     clear()
-                    print(f"You selected '{types[type_index]}'\n\n")
+                    print(f"You selected '{types[type_index]}'\n")
                     ypoints = array[:,type_index+1]
-
                 # Chosen: Bivariate (single-line chart e.g.: Bus passengers per Bus)
                 case(2):
                     clear()
-                    print("You selected 'Bivariate (single-line chart e.g.: Bus passengers per Bus)'\n\n")
-                    print("_____ per ______\n\nSelect 1st variable:")
-                    for idx, type in enumerate(types):
-                        print(f"{idx+1}. {type}")
-                    first_type_index = input_validation(len(types))-1 # Take user input for the type selection.
+                    print("You selected 'Bivariate (single-line chart e.g.: Bus passengers per Bus)'\n")
+                    print("_____ per ______\n")
+                    first_type_index = inquirer.list_input("Select 1st variable",
+                    choices=[(type, idx) for idx, type in enumerate(types)],
+                    carousel=True)
                     clear()
-                    print(f"{types[first_type_index]} per ______\n\nSelect 2nd variable:")
-                    for idx, type in enumerate(types):
-                        if idx == first_type_index:
-                            print(f"{idx+1}. {type} (already selected)")
-                        else:
-                            print(f"{idx+1}. {type}")
-                    second_type_index = input_validation(len(types), invalids=[first_type_index+1])-1 # Take user input for the type selection.
+                    print(f'''You selected 'Bivariate (single-line chart e.g.: Bus passengers per Bus)
+                          
+{types[first_type_index]} per ______
+                          ''')
+                          
+                    second_type_index = inquirer.list_input("Select 2nd variable",
+                    choices=[(type, idx) for idx, type in enumerate(types) if idx != first_type_index],
+                    carousel=True)
                     clear()
-                    print(f"You have selected:\n\n{types[first_type_index]} per {types[second_type_index]}")
+                    input(f"You have selected:\n\n{types[first_type_index]} per {types[second_type_index]}")
                 # Chosen: Multivariate (multi-line chart, multiple types)
                 case(3):
                     clear()
-                    print("You selected 'Multivariate (multi-line chart for multiple datatypes)'\n\n")
-                    """
-                    TO-DO!!! create a multi-option input because user can pick as many types as they want
-                    """
+                    print("You selected 'Multivariate (multi-line chart for multiple datatypes)'\n")
+                    multivariate_types = inquirer.checkbox("Select variables",
+                    choices=[(type, idx) for idx, type in enumerate(types)],
+                    carousel=True)
+                    input(multivariate_types)
                 # Chosen: return to view charts menu
                 case(4):
                     return
@@ -111,14 +105,10 @@ def dynamic_charts(array: np.ndarray, types: np.ndarray):
         # Chosen: data for a given year
         case(2):
             clear()
-            print("You selected 'Data for a given year'")
-            print('''
-    What kind of chart do you want to see?
-    1. Bar chart (comparison)
-    2. Pie chart (composition)
-    3. Return to view charts menu
-            ''')
-            chart_input = input_validation(3)
+            print("You selected 'Data for a given year'.\n")
+            chart_input = inquirer.list_input("What kind of chart do you want to see?",
+                    choices=[("Bar chart (comparison)",1),("Pie chart (composition)",2),(return_message,3)],
+                    carousel=True)
             match(chart_input):
                 # Chosen: Bar chart (comparison)
                 case(1):
@@ -131,9 +121,11 @@ def dynamic_charts(array: np.ndarray, types: np.ndarray):
                 # Chosen: return to view charts menu
                 case(3):
                     return
-            print(f"Available years: {array[0,0]} - {array[-1,0]}. What year would you like to view?")
-            year_input = input_validation(array[-1,0], start=array[0,0])
-            print(year_input)
+            print(f"Available years: {array[0,0]} - {array[-1,0]}.\n")
+            year_input = inquirer.list_input("What year would you like to view?",
+                    choices=[i for i in range(array[0,0], array[-1,0]+1)],
+                    carousel=True)
+            input(year_input)
         # Chosen: return to view charts menu
         case(3):
             return

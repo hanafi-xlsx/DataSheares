@@ -1,4 +1,3 @@
-from typing import List
 from os import system, name
 import csv
 
@@ -24,26 +23,3 @@ def clear():
     # for mac and linux(here, os.name is 'posix') 
     else: 
         _ = system('clear') 
-
-"""
-input_validation() handles input validation for all inputs in this program
-
-:param message: string for input message
-:param stop:    last int allowed
-:param start:   start int allowed (optional, default value is 1)
-"""
-def input_validation(stop:int, start:int = 1, message:str = "Give your selection here: ",  invalids:List[int] = []) -> int:
-    num = 0
-    while True:
-        try:
-            num = int(input(message))
-        except ValueError:
-            print(f"Please enter a valid integer from {start} to {stop}")
-            continue
-        if num in invalids:
-            print(f"'{num}' is an invalid input, please try something else")
-        elif num >= start and num <= stop:
-            print(f'You entered: {num}')
-            return num
-        else:
-            print(f'The integer must be in the range {start}-{stop}')

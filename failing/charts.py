@@ -147,7 +147,6 @@ def dynamic_charts(array: np.ndarray, types: np.ndarray):
             chart_input = inquirer.list_input("What kind of chart do you want to see?",
                                 choices=[("Bar chart (comparison)",1),("Pie chart (composition)",2),(return_message,3)],
                                 carousel=True)
-            print(f"{year_input}, {chart_input}")
             match(chart_input):
                 # Chosen: Bar chart (comparison)
                 case(1):
@@ -166,7 +165,7 @@ def dynamic_charts(array: np.ndarray, types: np.ndarray):
                     wedgeprops = {"linewidth": 1, 'width':1, "edgecolor":"k"}
                     plt.pie(array[year_input%100,1:], 
                             labels=types,autopct="%0.2f%%", 
-                            explode=[0.1 for x in array[year_input%100,1:]],
+                            explode=[0.1] * len(array[year_input%100,1:]),
                             shadow=True,
                             wedgeprops=wedgeprops,
                             radius = 1.1,

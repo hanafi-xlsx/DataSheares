@@ -49,8 +49,8 @@ def dynamic_charts(array: np.ndarray, types: np.ndarray):
     clear()
     print("You selected 'See your own desired charts'.\n")
     time_input = inquirer.list_input("What kind of data do you want to see?",
-    choices=[("Data across the years",1),("Data for a given year",2),(return_message,3)],
-    carousel=True)
+                    choices=[("Data across the years",1),("Data for a given year",2),(return_message,3)],
+                    carousel=True)
     match(time_input):
         # Chosen: data across the years
         case(1):
@@ -58,16 +58,16 @@ def dynamic_charts(array: np.ndarray, types: np.ndarray):
             xpoints = array[:,0]
             print("You selected 'Data across the years'\n")
             variable_input = inquirer.list_input("What kind of data do you want to see?",
-            choices=[("Univariate (bar chart for a single datatype)",1),("Bivariate (single-line chart e.g.: Bus passengers per Bus)",2),("Multivariate (multi-line chart)",3),(return_message,4)],
-            carousel=True)
+                                choices=[("Univariate (bar chart for a single datatype)",1),("Bivariate (single-line chart e.g.: Bus passengers per Bus)",2),("Multivariate (multi-line chart)",3),(return_message,4)],
+                                carousel=True)
             match(variable_input):
                 # Chosen: Univariate (bar chart, single type)
                 case(1):
                     clear()
                     print("You selected 'Univariate (bar chart for a single datatype)'\n")
                     type_index = inquirer.list_input("Select type",
-                    choices=[(type, idx) for idx, type in enumerate(types)],
-                    carousel=True)
+                                    choices=[(type, idx) for idx, type in enumerate(types)],
+                                    carousel=True)
                     clear()
                     print(f"You selected '{types[type_index]}'\n")
                     ypoints = array[:,type_index+1]
@@ -77,8 +77,8 @@ def dynamic_charts(array: np.ndarray, types: np.ndarray):
                     print("You selected 'Bivariate (single-line chart e.g.: Bus passengers per Bus)'\n")
                     print("_____ per ______\n")
                     first_type_index = inquirer.list_input("Select 1st variable",
-                    choices=[(type, idx) for idx, type in enumerate(types)],
-                    carousel=True)
+                                            choices=[(type, idx) for idx, type in enumerate(types)],
+                                            carousel=True)
                     clear()
                     print(f'''You selected 'Bivariate (single-line chart e.g.: Bus passengers per Bus)
                           
@@ -86,8 +86,8 @@ def dynamic_charts(array: np.ndarray, types: np.ndarray):
                           ''')
                           
                     second_type_index = inquirer.list_input("Select 2nd variable",
-                    choices=[(type, idx) for idx, type in enumerate(types) if idx != first_type_index],
-                    carousel=True)
+                                            choices=[(type, idx) for idx, type in enumerate(types) if idx != first_type_index],
+                                            carousel=True)
                     clear()
                     input(f"You have selected:\n\n{types[first_type_index]} per {types[second_type_index]}")
                 # Chosen: Multivariate (multi-line chart, multiple types)
@@ -95,8 +95,8 @@ def dynamic_charts(array: np.ndarray, types: np.ndarray):
                     clear()
                     print("You selected 'Multivariate (multi-line chart for multiple datatypes)'\n")
                     multivariate_types = inquirer.checkbox("Select variables",
-                    choices=[(type, idx) for idx, type in enumerate(types)],
-                    carousel=True)
+                                            choices=[(type, idx) for idx, type in enumerate(types)],
+                                            carousel=True)
                     input(multivariate_types)
                 # Chosen: return to view charts menu
                 case(4):
@@ -107,8 +107,8 @@ def dynamic_charts(array: np.ndarray, types: np.ndarray):
             clear()
             print("You selected 'Data for a given year'.\n")
             chart_input = inquirer.list_input("What kind of chart do you want to see?",
-                    choices=[("Bar chart (comparison)",1),("Pie chart (composition)",2),(return_message,3)],
-                    carousel=True)
+                                choices=[("Bar chart (comparison)",1),("Pie chart (composition)",2),(return_message,3)],
+                                carousel=True)
             match(chart_input):
                 # Chosen: Bar chart (comparison)
                 case(1):
@@ -123,8 +123,8 @@ def dynamic_charts(array: np.ndarray, types: np.ndarray):
                     return
             print(f"Available years: {array[0,0]} - {array[-1,0]}.\n")
             year_input = inquirer.list_input("What year would you like to view?",
-                    choices=[i for i in range(array[0,0], array[-1,0]+1)],
-                    carousel=True)
+                            choices=[i for i in range(array[0,0], array[-1,0]+1)],
+                            carousel=True)
             input(year_input)
         # Chosen: return to view charts menu
         case(3):

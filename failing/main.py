@@ -26,8 +26,8 @@ def main_menu():
     print("Welcome to DataSheares. This is the main menu.\n")
 
     main_menu = inquirer.list_input("Select your choice",
-                              choices=[('View charts',1), ('Show statistics',2), ('Quit program',3)],
-                              carousel=True)
+                    choices=[('View charts',1), ('Show statistics',2), ('Quit program',3)],
+                    carousel=True)
     match(main_menu):
         case(1):
             view_charts_menu()  # If user chose 1, call the view_charts_menu() function.
@@ -43,8 +43,8 @@ def view_charts_menu():
     clear()
     print("You selected 'view charts'.\n")  
     charts_menu = inquirer.list_input("What do you want to do?",
-                            choices=[('Show assignment charts',1), ('See your own desired charts',2), ('Back to the main menu',3), ('Quit program',4)],
-                            carousel=True)
+                    choices=[('Show assignment charts',1), ('See your own desired charts',2), ('Back to the main menu',3), ('Quit program',4)],
+                    carousel=True)
     match(charts_menu):
         case(1):
             assignment_charts(array_clean)
@@ -67,8 +67,8 @@ def show_statistics():
     print("You selected 'Show statistics'.\n")
     # Function to show statistics based on user-selected vehicle type.
     type_menu = inquirer.list_input("Select a type",
-                        choices=[type for type in types],
-                        carousel=True)
+                    choices=[type for type in types],
+                    carousel=True)
     
     type_string = type_menu
     type_index = np.where(types == type_string)[0][0]
@@ -96,8 +96,8 @@ def statistics_menu():
             print(f"You selected: 'See the number of {type_string.lower()} in a specific year'.\n")
 
             year_select = inquirer.list_input(f"Give the year you want to view, from {array_clean[0,0]} to {array_clean[-1,0]}",
-                choices=[i for i in range(array_clean[0,0], array_clean[-1,0]+1)],
-                carousel=True)
+                            choices=[i for i in range(array_clean[0,0], array_clean[-1,0]+1)],
+                            carousel=True)
             
             chosen_year = year_select
             chosen_index = chosen_year%100
@@ -122,12 +122,12 @@ def custom_year_statistics():
     print(f"You selected 'Show statistics for {type_string.lower()} in custom range of years'.\n")
 
     start = inquirer.list_input(f"Please give the start year (between {array_clean[0,0]} to {array_clean[-1,0]-1})",
-    choices=[i for i in range(array_clean[0,0], array_clean[-1,0])],
-    carousel=True)
+                choices=[i for i in range(array_clean[0,0], array_clean[-1,0])],
+                carousel=True)
     
     end = inquirer.list_input(f"Please give the end year (between {start+1} to {array_clean[-1,0]})",
-    choices=[i for i in range(start+1, array_clean[-1,0]+1)],
-    carousel=True)
+                choices=[i for i in range(start+1, array_clean[-1,0]+1)],
+                carousel=True)
     
     custom_filter = array_clean[abs(start) % 100:abs(end+1) % 100, [0,type_index+1]]
     clear()

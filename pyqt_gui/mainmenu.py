@@ -1,11 +1,9 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QComboBox, QVBoxLayout, QWidget, QPushButton
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QPushButton
 from PyQt5.QtCore import Qt
-import sys
+import qdarktheme
 
-menu = ["Display Table", "View Charts", "Search Statistics", "Close DataSheares"]
-
-class MyWindow(QMainWindow):
-    def __init__(self):
+class menuWindow(QMainWindow):
+    def __init__(self, menu):
         super().__init__()
 
         self.setWindowTitle("Main Menu")
@@ -31,12 +29,13 @@ class MyWindow(QMainWindow):
         self.close()
         return selected_option
 
-def mainMenu():
-    app = QApplication(sys.argv)
-    window = MyWindow()
+def mainMenu(menu):
+    app = QApplication([])
+    qdarktheme.setup_theme()
+    window = menuWindow(menu)
     window.resize(500,300)
     window.move(700, 250)
     window.show()
-    app.exec()
+    app.exec_()
     print("Selected: ", selected_option)
     return selected_option

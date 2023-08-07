@@ -4,10 +4,9 @@ import sys
 from PyQt5.QtWidgets import QHBoxLayout, QApplication, QMainWindow, QLabel, QComboBox, QVBoxLayout, QWidget, QPushButton, QGroupBox
 from PyQt5.QtCore import Qt
 
-class MyWindow(QMainWindow):
+class searchWindow(QMainWindow):
     def __init__(self, type_array):
         super().__init__()
-        self.setAttribute(Qt.WA_DeleteOnClose)
 
         self.setWindowTitle("Search Statistics")
         self.central_widget = QWidget()
@@ -39,6 +38,7 @@ class MyWindow(QMainWindow):
         most_year = b[np.where(b == maximum)[0], 0][0]
         self.highest_label = QLabel("Years where HIGHEST average: {maximum} {types} in {most_year}.".format(maximum=maximum, most_year=most_year, types=type_array[0].lower()))
         group_layout.addWidget(self.highest_label, alignment=Qt.AlignLeft)
+        
         self.layout.addWidget(group_box)
 
         self.year_group = QHBoxLayout()
@@ -55,7 +55,6 @@ class MyWindow(QMainWindow):
         self.layout.addLayout(self.year_group)
 
         self.menu_button = QPushButton("Main Menu", self)
-        self.menu_button.setFixedWidth(200)
         self.menu_button.clicked.connect(self.mainMenu)
         self.layout.addWidget(self.menu_button)
 
@@ -63,7 +62,7 @@ class MyWindow(QMainWindow):
         self.close()
         return
     
-    def type_selected(self, index):
+    def type_selected(self):
         selected_option = self.sender().currentText()
         selected_column = type_array.index(selected_option)
         selected_type_all_years = b[:, int(selected_column)]  # Get the column for the selected vehicle type. e.g.: [4059, 3928, 45986]
@@ -74,6 +73,21 @@ class MyWindow(QMainWindow):
         maximum = selected_type_all_years.max()
         most_year = b[np.where(b == maximum)[0], 0][0]
         self.highest_label.setText("Years where HIGHEST average: {maximum} {types} in {most_year}.".format(maximum=maximum, types=selected_option.lower(), most_year=most_year))
+
+    def createTabs(self):
+        tab1 = QWidget()
+        tab2 = QWidget()
+
+        self.tab_widget.addTab(tab1, 'Tab 1')
+        self.tab_widget.addTab(tab2, 'Tab 2')
+
+        layout1 = QVBoxLayout(tab1)
+        label1 = QLabel("Contents of Tab 1")
+        layout1.addWidget(label1)
+
+        layout2 = QVBoxLayout(tab2)
+        label2 = QLabel("Contents of Tab 2")
+        layout2.addWidget(label2)
 
 def list_items(items):
     result = ', '.join(str(item) for item in items[:-1])
@@ -89,8 +103,6 @@ def loadCSVData(fname):
     return datalist  # Return the final list of lists containing the CSV data.
 
 a = np.array(loadCSVData("brdrxingusc_dataset.csv")) # Load the CSV file into a NumPy array called 'a'.
-
-# Remove the 'types' column and transpose the table, so rows represent years and columns represent types.
 b = np.array(a.T[1:,], dtype=np.int32)
 
 invalid_input = "Please give a valid input."
@@ -104,11 +116,11 @@ def searchStats():
         type_array.append(ele)
     print(type_array)
     app = QApplication([])
-    window = MyWindow(type_array)
+    window = searchWindow(type_array)
     window.resize(500,200)
     window.move(700, 250)
     window.show()
-    app.exec()
+    app.exec_()
     return
     # selected_option = input("\nGive your selection here: ")  # Take user input for the type selection.
     # selected_type = types[int(selected_option)-1]  # Get the selected vehicle type based on user input. e.g.: 'buses', 'loaded trucks'

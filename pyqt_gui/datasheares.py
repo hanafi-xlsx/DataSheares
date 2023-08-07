@@ -1,13 +1,11 @@
 import sys
-import qdarktheme
-from PyQt5.QtWidgets import QApplication
-import mainmenu as mainmenu
-import searchstats as searchstats
+import mainmenu
+import searchstats
 
-def dataSheares():
-    menu = ["Display Table", "View Charts", "Search Statistics"]
-    closeprogram = "Close DataSheares"
-    selected_option = mainmenu.mainMenu()
+menu = ["Display Table", "View Charts", "Search Statistics", "Close DataSheares"]
+
+def startApp():
+    selected_option = mainmenu.mainMenu(menu)
     if selected_option == menu[0]:
         print("Running display table")
     elif selected_option == menu[1]:
@@ -15,12 +13,10 @@ def dataSheares():
     elif selected_option == menu[2]:
         print("Search Statistics")
         searchstats.searchStats()
-    elif selected_option == closeprogram:
-        print("Closing DataSheares")
+    elif selected_option == menu[3]:
+        print("Closing startApp")
         sys.exit()
     print("Main Menu")
-    dataSheares()
+    startApp()
 
-app = QApplication([])
-qdarktheme.setup_theme("auto")
-dataSheares()
+startApp()

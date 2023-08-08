@@ -5,6 +5,7 @@ from charts import assignment_charts, dynamic_charts
 from stats import get_stats
 from quit import quit_program
 import inquirer
+from tabulate import tabulate
 
 type_index, type_string, type_array = None, None, None
 quit_message = "Thanks for using this program."
@@ -22,6 +23,10 @@ def go_to_main_menu():
 main_menu() handles the main menu interface
 """
 def main_menu():
+    # Generate the table in fancy format.
+    table = tabulate(array_clean, types, tablefmt="fancy_grid")
+    print(table)
+    input("LOOK AT THIS TABLE")
     clear()
     print("Welcome to DataSheares. This is the main menu.\n")
 

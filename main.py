@@ -6,9 +6,6 @@ from stats import get_stats
 from quit import quit_program
 import inquirer
 from tabulate import tabulate
-import sys # to access the system
-import cv2
-
 
 type_index, type_string, type_array = None, None, None
 quit_message = "Thanks for using this program."
@@ -27,10 +24,6 @@ main_menu() handles the main menu interface
 """
 def main_menu():
     clear()
-    img = cv2.imread("datasheares.png", cv2.IMREAD_ANYCOLOR)
-    half = cv2.resize(img, (0, 0), fx = 0.3, fy = 0.3)
-    cv2.imshow("DataSheares", half)
-    cv2.waitKey(0)
     print("Welcome to DataSheares. This is the main menu.\n")
 
     main_menu = inquirer.list_input("Select your choice",
@@ -112,7 +105,7 @@ def statistics_menu():
             chosen_index = chosen_year%100
 
             clear()
-            print(tabulate([[chosen_year, array_clean[chosen_index,type_index+1]]], headers=['Year',types[type_index]], tablefmt="rounded_grid"))
+            print(tabulate([[chosen_year, round(array_clean[chosen_index,type_index+1])]], headers=['Year',types[type_index]], tablefmt="rounded_grid"))
             statistics_menu()
         case(3):
             go_to_main_menu()  # Go back to the main menu.

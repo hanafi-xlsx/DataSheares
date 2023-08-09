@@ -5,6 +5,10 @@ from charts import assignment_charts, dynamic_charts
 from stats import get_stats
 from quit import quit_program
 import inquirer
+from tabulate import tabulate
+import sys # to access the system
+import cv2
+
 
 type_index, type_string, type_array = None, None, None
 quit_message = "Thanks for using this program."
@@ -23,6 +27,10 @@ main_menu() handles the main menu interface
 """
 def main_menu():
     clear()
+    img = cv2.imread("datasheares.png", cv2.IMREAD_ANYCOLOR)
+    half = cv2.resize(img, (0, 0), fx = 0.3, fy = 0.3)
+    cv2.imshow("DataSheares", half)
+    cv2.waitKey(0)
     print("Welcome to DataSheares. This is the main menu.\n")
 
     main_menu = inquirer.list_input("Select your choice",
@@ -75,7 +83,8 @@ def show_statistics():
     selected_type_array = array_clean[:, [0,type_index+1]]
     clear()
     print(f"You selected '{type_string}'")
-    get_stats(selected_type_array, type_string)
+    print(f"Statistics for {type_string.lower()} from {array_clean[0,0]} to {array_clean[-1,0]}")
+    get_stats(selected_type_array)
     statistics_menu()  # Call the statistics_menu function
 
 """
@@ -103,8 +112,7 @@ def statistics_menu():
             chosen_index = chosen_year%100
 
             clear()
-            print(f"There were {array_clean[chosen_index,type_index+1]} {types[type_index].lower()}"
-                  f" in {chosen_year}.\n")
+            print(tabulate([[chosen_year, array_clean[chosen_index,type_index+1]]], headers=['Year',types[type_index]], tablefmt="rounded_grid"))
             statistics_menu()
         case(3):
             go_to_main_menu()  # Go back to the main menu.
@@ -131,7 +139,8 @@ def custom_year_statistics():
     
     custom_filter = array_clean[abs(start) % 100:abs(end+1) % 100, [0,type_index+1]]
     clear()
-    get_stats(custom_filter, type_string)
+    print(f"Statistics for {type_string.lower()} from {start} to {end}")
+    get_stats(custom_filter)
     statistics_menu()
 
 main_menu()  # Start the main program by calling the main_menu() function.

@@ -1,18 +1,16 @@
 import numpy as np
 from time import sleep
-from utils import clear, load_csv_data
+from utils import clear, get_csv_file
 from charts import assignment_charts, dynamic_charts
 from stats import get_stats, list_items
 from quit import quit_program
 import inquirer
 from tabulate import tabulate
+import tkinter as tk
+from PIL import Image, ImageTk
 
 type_index, type_string, type_array = None, None, None
 quit_message = "Thanks for using this program."
-array_raw = np.array(load_csv_data("brdrxingusc_dataset.csv")) # Load the CSV file into a NumPy array called 'array_raw'.
-types = array_raw[1:,0]  # Define a list of vehicle types.
-array_clean = np.array(array_raw.T[1:,], dtype=np.int32) # Remove 'types' column and transposes the array
-
 
 def go_to_main_menu():
     print("Going to main menu...")
@@ -25,9 +23,8 @@ main_menu() handles the main menu interface
 def main_menu():
     clear()
     print("Welcome to DataSheares. This is the main menu.\n")
-
     main_menu = inquirer.list_input("Select your choice",
-                    choices=[('View charts',1), ('Show statistics',2), ('Quit program',3)],
+                    choices=[('View charts',1), ('Show statistics',2), ('Re-select data',3), ('Quit program',4)],
                     carousel=True)
     match(main_menu):
         case(1):
@@ -35,7 +32,14 @@ def main_menu():
         case(2):
             show_statistics()  # If user chose 2, call the show_statistics() function.
         case(3):
-            quit_program()  # If user chose 3, print the quit message.
+            retrieve_data()  # If user chose 3, select a new .csv file to unpack.
+        case(4):
+            quit_program()  # If user chose 4, print the quit message.
+
+def retrieve_data():
+    global types, array_clean
+    types, array_clean = get_csv_file()
+    main_menu()
 
 """
 view_charts_menu() handles the view chart menu interface
@@ -139,4 +143,44 @@ def custom_year_statistics():
     get_stats(custom_filter, [types[i-1] for i in type_menu if i!=0])
     statistics_menu()
 
+def show_sheares():
+    root = tk.Tk()
+    root.title("Centered Image Window")
+    image_path = 'datasheares.png'
+    pil_image = Image.open(image_path)
+    image_width, image_height = pil_image.size
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    aspect_ratio = image_width / image_height
+    if image_width > screen_width or image_height > screen_height:
+        if screen_width / aspect_ratio <= screen_height:
+            new_width = screen_width
+            new_height = int(new_width / aspect_ratio)
+        else:
+            new_height = screen_height
+            new_width = int(new_height * aspect_ratio)
+    else:
+        new_width = image_width
+        new_height = image_height
+
+    resized_image = pil_image.resize((new_width, new_height))
+    tk_image = ImageTk.PhotoImage(resized_image)
+    image_label = tk.Label(root, image=tk_image)
+    image_label.pack(fill="both", expand=True)
+    def center_window(window, width, height):
+        screen_width = window.winfo_screenwidth()
+        screen_height = window.winfo_screenheight()
+        x_position = (screen_width - width) // 2
+        y_position = (screen_height - height) // 2
+        window.geometry(f"{width}x{height}+{x_position}+{y_position}")
+    center_window(root, new_width, new_height)
+    root.title("Close this window and look at your command line, nigger.")
+    def on_closing():
+        root.destroy()
+    root.protocol("WM_DELETE_WINDOW", on_closing)
+    root.lift()
+    root.mainloop()
+
+show_sheares()
+retrieve_data()
 main_menu()  # Start the main program by calling the main_menu() function.

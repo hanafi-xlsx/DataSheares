@@ -2,7 +2,7 @@ import numpy as np
 from time import sleep
 from utils import clear, load_csv_data
 from charts import assignment_charts, dynamic_charts
-from stats import get_stats
+from stats import get_stats, list_items
 from quit import quit_program
 import inquirer
 from tabulate import tabulate
@@ -63,21 +63,23 @@ show_statistics() asks the user to pick a type then shows statistics for a singl
 """
 def show_statistics():
     global type_index
-    global type_string
+    global type_strings
+    global type_menu
     clear()
     print("You selected 'Show statistics'.\n")
     # Function to show statistics based on user-selected vehicle type.
-    type_menu = inquirer.list_input("Select a type",
-                    choices=[type for type in types],
-                    carousel=True)
-    
-    type_string = type_menu
-    type_index = np.where(types == type_string)[0][0]
-    selected_type_array = array_clean[:, [0,type_index+1]]
+    type_menu = inquirer.checkbox("Select a type",
+                        choices=[(type, idx) for idx, type in enumerate(types)],
+                        carousel=True)
+    type_menu.sort()
+    type_strings = list_items([types[i] for i in type_menu])
+    type_menu = [x+1 for x in type_menu]
+    type_menu.insert(0,0)
+    selected_type_array = array_clean[:, type_menu]
     clear()
-    print(f"You selected '{type_string}'")
-    print(f"Statistics for {type_string.lower()} from {array_clean[0,0]} to {array_clean[-1,0]}")
-    get_stats(selected_type_array)
+    print(f"You selected '{type_strings}'")
+    print(f"Statistics for {type_strings.lower()} from {array_clean[0,0]} to {array_clean[-1,0]}")
+    get_stats(selected_type_array, [types[i-1] for i in type_menu if i!=0])
     statistics_menu()  # Call the statistics_menu function
 
 """
@@ -87,7 +89,7 @@ def statistics_menu():
     global type_string
 
     stats_menu = inquirer.list_input("Select a type",
-                    choices=[(f"Show statistics for {types[type_index].lower()} in custom range of years", 1), (f"See the number of {types[type_index].lower()} in a specific year",2), ("Back to the main menu",3), ("Quit program",4)],
+                    choices=[(f"Show statistics for {type_strings.lower()} in custom range of years", 1), (f"See the number of {type_strings.lower()} in a specific year",2), ("Back to the main menu",3), ("Quit program",4)],
                     carousel=True)
 
     match(stats_menu):
@@ -95,7 +97,7 @@ def statistics_menu():
             custom_year_statistics()
         case(2):
             clear()
-            print(f"You selected: 'See the number of {type_string.lower()} in a specific year'.\n")
+            print(f"You selected: 'See the number of {type_strings.lower()} in a specific year'.\n")
 
             year_select = inquirer.list_input(f"Give the year you want to view, from {array_clean[0,0]} to {array_clean[-1,0]}",
                             choices=[i for i in range(array_clean[0,0], array_clean[-1,0]+1)],
@@ -103,9 +105,11 @@ def statistics_menu():
             
             chosen_year = year_select
             chosen_index = chosen_year%100
-
+            values = array_clean[chosen_index, type_menu]
+            headers = [types[i-1] for i in type_menu if i!=0]
+            headers.insert(0,'Year')
             clear()
-            print(tabulate([[chosen_year, round(array_clean[chosen_index,type_index+1])]], headers=['Year',types[type_index]], tablefmt="rounded_grid"))
+            print(tabulate([[round(x) for x in values]], headers=headers, tablefmt="rounded_grid"))
             statistics_menu()
         case(3):
             go_to_main_menu()  # Go back to the main menu.
@@ -117,10 +121,10 @@ custom_year_statistics() shows statistics for a single type for a custom range o
 """
 def custom_year_statistics():
     global type_index
-    global type_string
+    global type_strings
 
     clear()
-    print(f"You selected 'Show statistics for {type_string.lower()} in custom range of years'.\n")
+    print(f"You selected 'Show statistics for {type_strings.lower()} in custom range of years'.\n")
 
     start = inquirer.list_input(f"Please give the start year (between {array_clean[0,0]} to {array_clean[-1,0]-1})",
                 choices=[i for i in range(array_clean[0,0], array_clean[-1,0])],
@@ -129,11 +133,10 @@ def custom_year_statistics():
     end = inquirer.list_input(f"Please give the end year (between {start+1} to {array_clean[-1,0]})",
                 choices=[i for i in range(start+1, array_clean[-1,0]+1)],
                 carousel=True)
-    
-    custom_filter = array_clean[abs(start) % 100:abs(end+1) % 100, [0,type_index+1]]
+    custom_filter = array_clean[abs(start) % 100:abs(end+1) % 100, type_menu]
     clear()
-    print(f"Statistics for {type_string.lower()} from {start} to {end}")
-    get_stats(custom_filter)
+    print(f"Statistics for {type_strings.lower()} from {start} to {end}")
+    get_stats(custom_filter, [types[i-1] for i in type_menu if i!=0])
     statistics_menu()
 
 main_menu()  # Start the main program by calling the main_menu() function.

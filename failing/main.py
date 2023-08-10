@@ -5,24 +5,37 @@ from charts import assignment_charts, dynamic_charts
 from stats import get_stats
 from quit import quit_program
 import inquirer
+from tabulate import tabulate
+import tkinter as tk
+from tkinter import filedialog, messagebox
+from PIL import Image, ImageTk
 
+messagebox.showinfo("DataSheares", "Please select your .csv file.")
 type_index, type_string, type_array = None, None, None
 quit_message = "Thanks for using this program."
-array_raw = np.array(load_csv_data("brdrxingusc_dataset.csv")) # Load the CSV file into a NumPy array called 'array_raw'.
+file_path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
+array_raw = np.array(load_csv_data(file_path)) # Load the CSV file into a NumPy array called 'array_raw'.
 types = array_raw[1:,0]  # Define a list of vehicle types.
 array_clean = np.array(array_raw.T[1:,], dtype=np.int32) # Remove 'types' column and transposes the array
-
 
 def go_to_main_menu():
     print("Going to main menu...")
     sleep(1)
+    clear()
     main_menu()
+
+def center_window(window, width, height):
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+    x_position = (screen_width - width) // 2
+    y_position = (screen_height - height) // 2
+    window.geometry(f"{width}x{height}+{x_position}+{y_position}")
 
 """
 main_menu() handles the main menu interface
 """
 def main_menu():
-    clear()
+    print("Hello!")
     print("Welcome to DataSheares. This is the main menu.\n")
 
     main_menu = inquirer.list_input("Select your choice",
@@ -134,4 +147,39 @@ def custom_year_statistics():
     get_stats(custom_filter, type_string)
     statistics_menu()
 
+def show_sheares():
+    root = tk.Tk()
+    root.title("Centered Image Window")
+    image_path = 'datasheares.png'
+    pil_image = Image.open(image_path)
+    image_width, image_height = pil_image.size
+
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+
+    aspect_ratio = image_width / image_height
+    if image_width > screen_width or image_height > screen_height:
+        if screen_width / aspect_ratio <= screen_height:
+            new_width = screen_width
+            new_height = int(new_width / aspect_ratio)
+        else:
+            new_height = screen_height
+            new_width = int(new_height * aspect_ratio)
+    else:
+        new_width = image_width
+        new_height = image_height
+
+    resized_image = pil_image.resize((new_width, new_height))
+    tk_image = ImageTk.PhotoImage(resized_image)
+    image_label = tk.Label(root, image=tk_image)
+    image_label.pack(fill="both", expand=True)
+
+    center_window(root, new_width, new_height)
+    root.title("Close this window and look at your command line, nigger.")
+    def on_closing():
+        root.destroy()
+    root.protocol("WM_DELETE_WINDOW", on_closing)
+    root.mainloop()
+
+show_sheares()
 main_menu()  # Start the main program by calling the main_menu() function.

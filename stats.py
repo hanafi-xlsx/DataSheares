@@ -24,11 +24,15 @@ get_stats() provides statistics for a given array
 
 the array needs to have years in the first column and the type in the second column
 """
-def get_stats(array:np.ndarray):
-    mean, max_value = array[:,1].mean(), array.max()
-    max_year  = array[np.where(array == max_value)[0], 0][0]
-    values_above_avg = list_items(array[np.where(array[:,1] > mean), 0][0])
-    display = {'Average': round(mean), 'Years above average': values_above_avg, 'Highest (year)': max_year, 'Highest (value)': max_value}
-    print(tabulate(display.items(), tablefmt="rounded_grid"))
+def get_stats(array:np.ndarray, types:list):
+    tablefmt='rounded_grid'
+    headers=['Average', 'Years above average', 'Highest (years)', 'Highest (value)']
+    mean_list = [round(i.mean()) for i in array.T]
+    max_value_list = [round(i.max()) for i in array.T]
+    max_year_list = [array[np.where(array == max_value)[0], 0][0] for max_value in max_value_list]
+    above_avg_list = [list_items(array[np.where(array[:,idx] > mean), 0][0]) for idx, mean in enumerate(mean_list)]
+
+    display = zip(types,mean_list[1:], above_avg_list[1:], max_year_list[1:], max_value_list[1:])
+    print(tabulate(display, tablefmt=tablefmt, headers=headers))
 
 

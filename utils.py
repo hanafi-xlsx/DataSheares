@@ -5,7 +5,7 @@ from PyQt5.QtGui import QIcon
 import sys
 import csv
 import numpy as np
-datasheares_icon = "assets/appicon.png"
+datasheares_icon = "images/appicon.png"
 
 """
 this function takes in a file name and returns a datalist containing the file contents

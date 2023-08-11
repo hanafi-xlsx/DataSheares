@@ -78,15 +78,17 @@ class ImageMovingApp(QGraphicsView):
             self.sheep_sheared = False
 
     def spawn_wool(self, x, y):
-        white_wool = QGraphicsPixmapItem(QPixmap("images/white_wool.png").scaled(80, 80))
-        self.scene.addItem(white_wool)
-        items.append(white_wool)
-        white_wool.setPos(x, y)
-        self.movement_data[white_wool] = {
-            'direction_x': random.choice([1, -1]),
-            'direction_y': random.choice([1, -1]),
-            'speed': random.randint(4, 8)
-        }
+        random_number = random.randint(1, 3)
+        for i in range(random_number):
+            white_wool = QGraphicsPixmapItem(QPixmap("images/white_wool.png").scaled(80, 80))
+            self.scene.addItem(white_wool)
+            items.append(white_wool)
+            white_wool.setPos(x, y)
+            self.movement_data[white_wool] = {
+                'direction_x': random.choice([1, -1]),
+                'direction_y': random.choice([1, -1]),
+                'speed': random.randint(4, 8)
+            }
 
 def data_shearing():
     app = QApplication(sys.argv)

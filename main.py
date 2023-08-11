@@ -32,8 +32,9 @@ from charts import assignment_charts, dynamic_charts
 from stats import get_stats, list_items
 from quit import quit_program
 from tabulate import tabulate
-import inquirer
 from stats import validation_function
+import numpy as np
+import inquirer
 
 clear()
 type_index, type_string, type_array = None, None, None

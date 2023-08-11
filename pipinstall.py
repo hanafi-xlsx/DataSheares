@@ -21,7 +21,8 @@ def install_pip_libraries():
                     print(module+" installed.")
                 python_executable = sys.executable
                 script_path = os.path.abspath(__file__)
-                subprocess.run([python_executable, script_path])
+                main_path = os.path.dirname(script_path)+"/main.py"
+                subprocess.run([python_executable, main_path])
                 sys.exit()
             case("no"):
                 exit()

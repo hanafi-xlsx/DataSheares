@@ -5,8 +5,8 @@ from stats import get_stats, list_items
 from quit import quit_program
 from tabulate import tabulate
 from PIL import Image, ImageTk
-import tkinter as tk
 import inquirer
+from stats import validation_function
 
 type_index, type_string, type_array = None, None, None
 quit_message = "Thanks for using this program."
@@ -72,7 +72,8 @@ def show_statistics():
     # Function to show statistics based on user-selected vehicle type.
     type_menu = inquirer.checkbox("Select a type",
                         choices=[(type, idx) for idx, type in enumerate(types)],
-                        carousel=True)
+                        carousel=True,
+                        validate=validation_function)
     type_menu.sort()
     type_strings = 0
     while type_strings == 0:
@@ -145,8 +146,8 @@ def custom_year_statistics():
 
 def show_sheares():
     root = tk.Tk()
-    root.title("Centered Image Window")
-    image_path = 'assets/datasheares.png'
+    root.title("Centered Image Window"
+    image_path = 'images/logo.jpg'
     pil_image = Image.open(image_path)
     image_width, image_height = pil_image.size
     screen_width = root.winfo_screenwidth()

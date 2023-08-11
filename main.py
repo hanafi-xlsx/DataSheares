@@ -1,15 +1,12 @@
-import numpy as np
 from time import sleep
-from utils import clear, get_csv_file
+from utils import clear, get_data
 from charts import assignment_charts, dynamic_charts
 from stats import get_stats, list_items
 from quit import quit_program
-import inquirer
 from tabulate import tabulate
-import tkinter as tk
 from PIL import Image, ImageTk
+import inquirer
 from stats import validation_function
-
 
 type_index, type_string, type_array = None, None, None
 quit_message = "Thanks for using this program."
@@ -23,7 +20,6 @@ def go_to_main_menu():
 main_menu() handles the main menu interface
 """
 def main_menu():
-    clear()
     print("Welcome to DataSheares. This is the main menu.\n")
     main_menu = inquirer.list_input("Select your choice",
                     choices=[('View charts',1), ('Show statistics',2), ('Re-select data',3), ('Quit program',4)],
@@ -40,7 +36,7 @@ def main_menu():
 
 def retrieve_data():
     global types, array_clean
-    types, array_clean = get_csv_file()
+    types, array_clean = get_data()
     main_menu()
 
 """
@@ -79,7 +75,9 @@ def show_statistics():
                         carousel=True,
                         validate=validation_function)
     type_menu.sort()
-    type_strings = list_items([types[i] for i in type_menu])
+    type_strings = 0
+    while type_strings == 0:
+        type_strings = list_items([types[i] for i in type_menu])
     type_menu = [x+1 for x in type_menu]
     type_menu.insert(0,0)
     selected_type_array = array_clean[:, type_menu]
@@ -148,7 +146,7 @@ def custom_year_statistics():
 
 def show_sheares():
     root = tk.Tk()
-    root.title("Centered Image Window")
+    root.title("Centered Image Window"
     image_path = 'images/logo.jpg'
     pil_image = Image.open(image_path)
     image_width, image_height = pil_image.size

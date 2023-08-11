@@ -33,6 +33,7 @@ from stats import get_stats, list_items
 from quit import quit_program
 from tabulate import tabulate
 import inquirer
+from stats import validation_function
 
 clear()
 type_index, type_string, type_array = None, None, None
@@ -100,7 +101,8 @@ def show_statistics():
     # Function to show statistics based on user-selected vehicle type.
     type_menu = inquirer.checkbox("Select a type",
                         choices=[(type, idx) for idx, type in enumerate(types)],
-                        carousel=True)
+                        carousel=True,
+                        validate=validation_function)
     type_menu.sort()
     type_strings = 0
     while type_strings == 0:

@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import inquirer
 from utils import clear
-from stats import list_items
+from stats import list_items, validation_function
 
 heading_font = {'family':'sans','color':'black','size': 15}
 opacity, error_config, color = 0.5, {'ecolor': '0.3'}, 'r'
@@ -118,7 +118,8 @@ def dynamic_charts(array: np.ndarray, types: np.ndarray):
                     print("You selected 'Multivariate (multi-line chart for multiple datatypes)'\n")
                     multivariate_types = inquirer.checkbox("Select variables",
                                             choices=[(type, idx) for idx, type in enumerate(types)],
-                                            carousel=True)
+                                            carousel=True,
+                                            validate=validation_function)
                     for i in multivariate_types:
                         plt.plot(array[:,i+1],
                             alpha=opacity, 

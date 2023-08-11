@@ -106,17 +106,19 @@ def statistics_menu():
             clear()
             print(f"You selected: 'See the number of {type_strings.lower()} in a specific year'.\n")
 
-            year_select = inquirer.list_input(f"Give the year you want to view, from {array_clean[0,0]} to {array_clean[-1,0]}",
+            year_select = inquirer.checkbox(f"Give the year you want to view, from {array_clean[0,0]} to {array_clean[-1,0]}",
                             choices=[i for i in range(array_clean[0,0], array_clean[-1,0]+1)],
-                            carousel=True)
+                            carousel=True,
+                            validate=validation_function)
             
-            chosen_year = year_select
-            chosen_index = chosen_year%100
-            values = array_clean[chosen_index, type_menu]
+            chosen_years = year_select
+            chosen_indexes = [year%100 for year in chosen_years]
+            chosen_years_array = np.array(array_clean[chosen_indexes, :])
+            chosen_years_array = chosen_years_array[:, type_menu]
             headers = [types[i-1] for i in type_menu if i!=0]
             headers.insert(0,'Year')
             clear()
-            print(tabulate([[round(x) for x in values]], headers=headers, tablefmt="rounded_grid"))
+            print(tabulate(chosen_years_array, headers=headers, tablefmt="rounded_grid"))
             statistics_menu()
         case(3):
             go_to_main_menu()  # Go back to the main menu.

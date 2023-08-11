@@ -1,13 +1,12 @@
-import numpy as np
 from time import sleep
-from utils import clear, get_csv_file
+from utils import clear, get_data
 from charts import assignment_charts, dynamic_charts
 from stats import get_stats, list_items
 from quit import quit_program
-import inquirer
 from tabulate import tabulate
-import tkinter as tk
 from PIL import Image, ImageTk
+import tkinter as tk
+import inquirer
 
 type_index, type_string, type_array = None, None, None
 quit_message = "Thanks for using this program."
@@ -38,7 +37,7 @@ def main_menu():
 
 def retrieve_data():
     global types, array_clean
-    types, array_clean = get_csv_file()
+    types, array_clean = get_data()
     main_menu()
 
 """
@@ -76,7 +75,9 @@ def show_statistics():
                         choices=[(type, idx) for idx, type in enumerate(types)],
                         carousel=True)
     type_menu.sort()
-    type_strings = list_items([types[i] for i in type_menu])
+    type_strings = 0
+    while type_strings == 0:
+        type_strings = list_items([types[i] for i in type_menu])
     type_menu = [x+1 for x in type_menu]
     type_menu.insert(0,0)
     selected_type_array = array_clean[:, type_menu]

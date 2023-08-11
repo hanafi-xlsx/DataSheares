@@ -1,4 +1,5 @@
 from time import sleep
+from disposable import welcome_window
 from utils import clear, get_data
 from charts import assignment_charts, dynamic_charts
 from stats import get_stats, list_items
@@ -143,44 +144,6 @@ def custom_year_statistics():
     get_stats(custom_filter, [types[i-1] for i in type_menu if i!=0])
     statistics_menu()
 
-def show_sheares():
-    root = tk.Tk()
-    root.title("Centered Image Window")
-    image_path = 'assets/datasheares.png'
-    pil_image = Image.open(image_path)
-    image_width, image_height = pil_image.size
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
-    aspect_ratio = image_width / image_height
-    if image_width > screen_width or image_height > screen_height:
-        if screen_width / aspect_ratio <= screen_height:
-            new_width = screen_width
-            new_height = int(new_width / aspect_ratio)
-        else:
-            new_height = screen_height
-            new_width = int(new_height * aspect_ratio)
-    else:
-        new_width = image_width
-        new_height = image_height
-
-    resized_image = pil_image.resize((new_width, new_height))
-    tk_image = ImageTk.PhotoImage(resized_image)
-    image_label = tk.Label(root, image=tk_image)
-    image_label.pack(fill="both", expand=True)
-    def center_window(window, width, height):
-        screen_width = window.winfo_screenwidth()
-        screen_height = window.winfo_screenheight()
-        x_position = (screen_width - width) // 2
-        y_position = (screen_height - height) // 2
-        window.geometry(f"{width}x{height}+{x_position}+{y_position}")
-    center_window(root, new_width, new_height)
-    root.title("Close this window and look at your command line, nigger.")
-    def on_closing():
-        root.destroy()
-    root.protocol("WM_DELETE_WINDOW", on_closing)
-    root.lift()
-    root.mainloop()
-
-show_sheares()
+welcome_window()
 retrieve_data()
 main_menu()  # Start the main program by calling the main_menu() function.

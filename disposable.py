@@ -11,7 +11,7 @@ class ImageDisplayApp(QMainWindow):
 
     def init_ui(self):
         self.setWindowTitle('Welcome to DataSheares!')
-        self.setWindowIcon(QIcon('assets/appicon.png'))
+        self.setWindowIcon(QIcon('images/appicon.png'))
 
         self.central_widget = QWidget(self)
         self.setCentralWidget(self.central_widget)
@@ -26,7 +26,7 @@ class ImageDisplayApp(QMainWindow):
         self.layout.addWidget(self.image_label)
         self.layout.addWidget(self.proceed_button)
 
-        self.image_path = 'assets/datasheares.png'  # Replace with your image path
+        self.image_path = 'images/datasheares.png'  # Replace with your image path
         self.image_pixmap = QPixmap(self.image_path).scaled(700,700)
         self.image_label.setPixmap(self.image_pixmap)
 

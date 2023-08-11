@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 import sys
 import csv
-import numpy as np
+
 datasheares_icon = "images/appicon.png"
 
 """
@@ -13,21 +13,6 @@ this function takes in a file name and returns a datalist containing the file co
 :param file_name:   name of the file
 :return:            list of rows, each row is a list
 """
-
-def get_data():
-    file_path, types, array_clean = None, None, None
-    while not file_path:
-        file_path = get_csv_file("Please select your .csv file.")
-        if not file_path:
-            confirm_exit()
-    try:
-        array_raw = np.array(load_csv_data(file_path)) # Load the CSV file into a NumPy array called 'array_raw'.
-        types = array_raw[1:,0]  # Define a list of vehicle types.
-        array_clean = np.array(array_raw.T[1:,], dtype=np.int32) # Remove 'types' column and transposes the array   
-    except:
-        show_message(2, "Error", "Invalid .csv file.")
-        return get_data()
-    return types, array_clean
 
 def load_csv_data(file_name:str) -> list:
     # Function to load CSV data from the given file name and return it as a li5st of lists.
@@ -47,12 +32,13 @@ def clear():
         _ = system('clear') 
 
 def get_csv_file(window_title):
-    app = QApplication([])
+    app = QApplication(sys.argv)
     file_dialog = QFileDialog()
     file_dialog.setWindowTitle(window_title)
     file_dialog.setNameFilter("CSV Files (*.csv)")
     file_dialog.setWindowFlags(file_dialog.windowFlags() | Qt.WindowStaysOnTopHint)
-    file_dialog.exec_()
+    file_dialog.show()
+    app.exec_()
     file_path = file_dialog.selectedFiles()[0] if file_dialog.result() else None
     return file_path
 

@@ -27,7 +27,7 @@ except:
 
 from time import sleep
 from disposable import welcome_window
-from utils import clear, get_data
+from utils import clear, load_csv_data, show_message, confirm_exit, get_csv_file
 from charts import assignment_charts, dynamic_charts
 from stats import get_stats, list_items
 from quit import quit_program
@@ -60,13 +60,22 @@ def main_menu():
         case(2):
             show_statistics()  # If user chose 2, call the show_statistics() function.
         case(3):
-            retrieve_data()  # If user chose 3, select a new .csv file to unpack.
-        case(4):
             quit_program()  # If user chose 4, print the quit message.
 
 def retrieve_data():
     global types, array_clean
-    types, array_clean = get_data()
+    file_path, types, array_clean = None, None, None
+    while not file_path:
+        file_path = get_csv_file("Please select your .csv file.")
+        if not file_path:
+            confirm_exit()
+    try:
+        array_raw = np.array(load_csv_data(file_path)) # Load the CSV file into a NumPy array called 'array_raw'.
+        types = array_raw[1:,0]  # Define a list of vehicle types.
+        array_clean = np.array(array_raw.T[1:,], dtype=np.int32) # Remove 'types' column and transposes the array   
+    except:
+        show_message(2, "Error", "Invalid .csv file.")
+        return retrieve_data()
     main_menu()
 
 """

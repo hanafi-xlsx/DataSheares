@@ -23,7 +23,7 @@ def get_data():
         array_clean = np.array(array_raw.T[1:,], dtype=np.int32) # Remove 'types' column and transposes the array   
     except:
         show_message(2, "Error", "Invalid .csv file.")
-        get_data()
+        return get_data()
     return types, array_clean
 
 def load_csv_data(file_name:str) -> list:

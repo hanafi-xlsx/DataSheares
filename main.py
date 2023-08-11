@@ -20,7 +20,6 @@ def go_to_main_menu():
 main_menu() handles the main menu interface
 """
 def main_menu():
-    clear()
     print("Welcome to DataSheares. This is the main menu.\n")
     main_menu = inquirer.list_input("Select your choice",
                     choices=[('View charts',1), ('Show statistics',2), ('Re-select data',3), ('Quit program',4)],
@@ -147,7 +146,7 @@ def custom_year_statistics():
 def show_sheares():
     root = tk.Tk()
     root.title("Centered Image Window")
-    image_path = 'datasheares.png'
+    image_path = 'assets/datasheares.png'
     pil_image = Image.open(image_path)
     image_width, image_height = pil_image.size
     screen_width = root.winfo_screenwidth()

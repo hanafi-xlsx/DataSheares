@@ -52,7 +52,7 @@ def main_menu():
     clear()
     print("Welcome to DataSheares. This is the main menu.\n")
     main_menu = inquirer.list_input("Select your choice",
-                    choices=[('View charts',1), ('Show statistics',2), ('Re-select data',3), ('Quit program',4)],
+                    choices=[('View charts',1), ('Show statistics',2), ('Quit program',3)],
                     carousel=True)
     match(main_menu):
         case(1):

@@ -149,7 +149,7 @@ def custom_year_statistics():
 def show_sheares():
     root = tk.Tk()
     root.title("Centered Image Window")
-    image_path = 'datasheares.png'
+    image_path = 'images/logo.jpg'
     pil_image = Image.open(image_path)
     image_width, image_height = pil_image.size
     screen_width = root.winfo_screenwidth()

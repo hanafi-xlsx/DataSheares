@@ -1,42 +1,14 @@
-from tkinter import messagebox
-import tkinter as tk
-import subprocess
-import sys
-import os
-
-modules = ["PyQt5", "numpy", "inquirer", "tabulate", "matplotlib"]
-root = tk.Tk()
-root.withdraw()
-try:
-    module_statuses = {module: True if __import__(module) else False for module in modules}
-except:
-    answer = messagebox.askquestion("Installation", "Do you want to begin the greatness?")
-    match(answer):
-        case("yes"):
-            modules.append("pyqtdarktheme")
-            print("Commencing installation. Please wait.")
-            for module in modules:
-                subprocess.run(["pip", "install", module], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                print(module+" installed.")
-            python_executable = sys.executable
-            script_path = os.path.abspath(__file__)
-            subprocess.run([python_executable, script_path])
-            sys.exit()
-        case("no"):
-            exit()
-
 from time import sleep
-from disposable import welcome_window
-from utils import clear, load_csv_data, show_message, confirm_exit, get_csv_file
+from welcome import welcome_window
+from utils import clear, load_csv_data, show_message, confirm_exit, get_csv_file, validation_function
 from charts import assignment_charts, dynamic_charts
 from stats import get_stats, list_items
 from quit import quit_program
 from tabulate import tabulate
-from stats import validation_function
+from pipinstall import install_pip_libraries
 import numpy as np
 import inquirer
 
-clear()
 type_index, type_string, type_array = None, None, None
 quit_message = "Thanks for using this program."
 
@@ -186,6 +158,7 @@ def custom_year_statistics():
     statistics_menu()
 
 clear()
+install_pip_libraries()
 welcome_window()
 retrieve_data()
 main_menu()  # Start the main program by calling the main_menu() function.

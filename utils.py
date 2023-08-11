@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 import sys
 import csv
+from inquirer import errors
 
 datasheares_icon = "images/appicon.png"
 
@@ -66,3 +67,9 @@ def confirm_exit():
         sys.exit()  # Exit the application
     else:
         app.quit()  # Close the message box and continue the application
+
+def validation_function(answers, current):
+   if current == []:
+      raise errors.ValidationError('', reason='You need to select at least one option.')
+
+   return True

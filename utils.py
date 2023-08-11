@@ -32,13 +32,12 @@ def clear():
         _ = system('clear') 
 
 def get_csv_file(window_title):
-    app = QApplication(sys.argv)
+    app = QApplication([])
     file_dialog = QFileDialog()
     file_dialog.setWindowTitle(window_title)
     file_dialog.setNameFilter("CSV Files (*.csv)")
     file_dialog.setWindowFlags(file_dialog.windowFlags() | Qt.WindowStaysOnTopHint)
-    file_dialog.show()
-    app.exec_()
+    file_dialog.exec_()
     file_path = file_dialog.selectedFiles()[0] if file_dialog.result() else None
     return file_path
 

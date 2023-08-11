@@ -1,5 +1,6 @@
 import numpy as np
 from tabulate import tabulate
+from inquirer import errors
 
 """
 this function creates a list in proper English when given a list of items
@@ -35,4 +36,8 @@ def get_stats(array:np.ndarray, types:list):
     display = zip(types,mean_list[1:], above_avg_list[1:], max_year_list[1:], max_value_list[1:])
     print(tabulate(display, tablefmt=tablefmt, headers=headers))
 
+def validation_function(answers, current):
+   if current == []:
+      raise errors.ValidationError('', reason='You need to select at least one option.')
 
+   return True

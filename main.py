@@ -8,6 +8,8 @@ import inquirer
 from tabulate import tabulate
 import tkinter as tk
 from PIL import Image, ImageTk
+from stats import validation_function
+
 
 type_index, type_string, type_array = None, None, None
 quit_message = "Thanks for using this program."
@@ -74,7 +76,8 @@ def show_statistics():
     # Function to show statistics based on user-selected vehicle type.
     type_menu = inquirer.checkbox("Select a type",
                         choices=[(type, idx) for idx, type in enumerate(types)],
-                        carousel=True)
+                        carousel=True,
+                        validate=validation_function)
     type_menu.sort()
     type_strings = list_items([types[i] for i in type_menu])
     type_menu = [x+1 for x in type_menu]

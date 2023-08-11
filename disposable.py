@@ -20,6 +20,10 @@ class ImageDisplayApp(QMainWindow):
         self.image_label.setAlignment(Qt.AlignCenter)
         
         self.proceed_button = QPushButton('Select .csv file', self)
+        self.proceed_button.setStyleSheet(
+            "background-color: darkgreen; color: white; font-size: 60px; padding: 10px 20px; border-radius:30px"
+        )
+        self.proceed_button.setFixedHeight(150)  # Adjust the height as needed
         self.proceed_button.clicked.connect(self.on_proceed)
 
         self.layout = QVBoxLayout(self.central_widget)
@@ -27,7 +31,7 @@ class ImageDisplayApp(QMainWindow):
         self.layout.addWidget(self.proceed_button)
 
         self.image_path = 'images/datasheares.png'  # Replace with your image path
-        self.image_pixmap = QPixmap(self.image_path).scaled(700,700)
+        self.image_pixmap = QPixmap(self.image_path).scaled(700, 700)
         self.image_label.setPixmap(self.image_pixmap)
 
     def on_proceed(self):

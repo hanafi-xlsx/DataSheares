@@ -1,3 +1,5 @@
+from pipinstall import install_pip_libraries
+install_pip_libraries()
 from time import sleep
 from welcome import welcome_window
 from utils import clear, load_csv_data, show_message, confirm_exit, get_csv_file, validation_function
@@ -5,7 +7,6 @@ from charts import assignment_charts, dynamic_charts
 from stats import get_stats, list_items
 from quit import quit_program
 from tabulate import tabulate
-from pipinstall import install_pip_libraries
 import numpy as np
 import inquirer
 
@@ -158,7 +159,6 @@ def custom_year_statistics():
     statistics_menu()
 
 clear()
-install_pip_libraries()
 welcome_window()
 retrieve_data()
 main_menu()  # Start the main program by calling the main_menu() function.

@@ -1,9 +1,12 @@
 from os import system, name
 from PyQt5.QtWidgets import QApplication, QFileDialog, QMessageBox
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
 import sys
 import csv
 import numpy as np
+datasheares_icon = "assets/appicon.png"
+
 """
 this function takes in a file name and returns a datalist containing the file contents
 
@@ -48,7 +51,7 @@ def get_csv_file(window_title):
     file_dialog = QFileDialog()
     file_dialog.setWindowTitle(window_title)
     file_dialog.setNameFilter("CSV Files (*.csv)")
-    file_dialog.setWindowFlags(file_dialog.windowFlags() | Qt.WindowStaysOnTopHint) 
+    file_dialog.setWindowFlags(file_dialog.windowFlags() | Qt.WindowStaysOnTopHint)
     file_dialog.exec_()
     file_path = file_dialog.selectedFiles()[0] if file_dialog.result() else None
     return file_path
@@ -58,7 +61,7 @@ def show_message(type, title, message):
     msg_box = QMessageBox()
     match(type):
         case(1):
-            msg_box.setIcon(QMessageBox.Information)
+            msg_box.setIcon(QIcon(datasheares_icon))
         case(2):
             msg_box.setIcon(QMessageBox.Critical)
     msg_box.setWindowTitle(title)
@@ -69,7 +72,7 @@ def show_message(type, title, message):
 def confirm_exit():
     app = QApplication(sys.argv)
     msg_box = QMessageBox()
-    msg_box.setIcon(QMessageBox.Question)
+    msg_box.setWindowIcon(QIcon(datasheares_icon))
     msg_box.setWindowTitle("Confirm")
     msg_box.setText("Are you sure you want to close DataSheares? :((((")
     msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)

@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
-from utils import clear
-from stats import list_items
 import numpy as np
 import inquirer
+from utils import clear
+from stats import list_items
 
 heading_font = {'family':'sans','color':'black','size': 15}
 opacity, error_config, color = 0.5, {'ecolor': '0.3'}, 'r'

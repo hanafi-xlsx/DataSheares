@@ -41,7 +41,7 @@ class ImageDisplayApp(QMainWindow):
         screen_geometry = QDesktopWidget().screenGeometry()
         window_geometry = self.geometry()
         x = (screen_geometry.width() - window_geometry.width()) // 2
-        y = (screen_geometry.height() - window_geometry.height()) // 4
+        y = (screen_geometry.height() - window_geometry.height()) // 8
         self.move(x, y)
 
 def welcome_window():

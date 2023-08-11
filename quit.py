@@ -106,3 +106,4 @@ def data_shearing():
     window.setFixedSize(800, 700)
     sys.exit(app.exec_())
 
+quit_program()

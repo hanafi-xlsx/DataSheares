@@ -30,7 +30,6 @@ from disposable import welcome_window
 from utils import clear, load_csv_data, show_message, confirm_exit, get_csv_file
 from charts import assignment_charts, dynamic_charts
 from stats import get_stats, list_items
-from quit import quit_program
 from tabulate import tabulate
 from stats import validation_function
 import numpy as np
@@ -60,7 +59,7 @@ def main_menu():
         case(2):
             show_statistics()  # If user chose 2, call the show_statistics() function.
         case(3):
-            quit_program()  # If user chose 4, print the quit message.
+            launch_quit()  # If user chose 4, print the quit message.
 
 def retrieve_data():
     global types, array_clean
@@ -97,7 +96,7 @@ def view_charts_menu():
         case(3):
             main_menu()
         case(4):
-            quit_program()
+            launch_quit()
 
 """
 show_statistics() asks the user to pick a type then shows statistics for a single type throughout the years
@@ -160,7 +159,7 @@ def statistics_menu():
         case(3):
             go_to_main_menu()  # Go back to the main menu.
         case(4):
-            quit_program()  # Quit the program.
+            launch_quit()  # Quit the program.
 
 """
 custom_year_statistics() shows statistics for a single type for a custom range of years
@@ -184,6 +183,13 @@ def custom_year_statistics():
     print(f"Statistics for {type_strings.lower()} from {start} to {end}")
     get_stats(custom_filter, [types[i-1] for i in type_menu if i!=0])
     statistics_menu()
+
+def launch_quit():
+    current_file_path = os.path.abspath(__file__)
+    quit_path = os.path.dirname(current_file_path)+"/quit.py"
+    python_executable = sys.executable
+    subprocess.run([python_executable, quit_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    sys.exit()
 
 clear()
 welcome_window()

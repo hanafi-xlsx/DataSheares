@@ -27,9 +27,9 @@ the array needs to have years in the first column and the type in the second col
 def get_stats(array:np.ndarray, types:list):
     tablefmt='rounded_grid'
     headers=['Average', 'Years above average', 'Highest (years)', 'Highest (value)']
-    mean_list = [round(i.mean()) for i in array.T]
-    max_value_list = [round(i.max()) for i in array.T]
+    mean_list = [round(i.mean()) for i in array.T[1:]]
+    max_value_list = [round(i.max()) for i in array.T[1:]]
     max_year_list = [array[np.where(array == max_value)[0], 0][0] for max_value in max_value_list]
-    above_avg_list = [list_items(array[np.where(array[:,idx] > mean), 0][0]) for idx, mean in enumerate(mean_list)]
-    display = zip(types,mean_list[1:], above_avg_list[1:], max_year_list[1:], max_value_list[1:])
+    above_avg_list = [list_items(array[np.where(array[:,idx+1] > mean), 0][0]) for idx, mean in enumerate(mean_list)]
+    display = zip(types, mean_list, above_avg_list, max_year_list, max_value_list)
     print(tabulate(display, tablefmt=tablefmt, headers=headers))

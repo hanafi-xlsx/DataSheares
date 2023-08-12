@@ -57,6 +57,7 @@ def show_message(type, title, message):
     msg_box.exec_()
 
 def confirm_exit():
+    play_audio("click")
     app = QApplication(sys.argv)
     msg_box = QMessageBox()
     msg_box.setWindowIcon(QIcon(datasheares_icon))
@@ -65,8 +66,10 @@ def confirm_exit():
     msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
     choice = msg_box.exec_()
     if choice == QMessageBox.Yes:
+        play_audio("click")
         sys.exit()  # Exit the application
     else:
+        play_audio("click")
         app.quit()  # Close the message box and continue the application
 
 def validation_function(answers, current):

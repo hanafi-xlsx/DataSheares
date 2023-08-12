@@ -1,8 +1,8 @@
 from time import sleep
 from utils import play_audio
-from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QGraphicsPixmapItem
+from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QGraphicsPixmapItem, QPushButton
 from PyQt5.QtCore import Qt, QTimer, QTime
-from PyQt5.QtGui import QPixmap, QTransform
+from PyQt5.QtGui import QPixmap, QTransform, QIcon
 import sys
 import random
 
@@ -21,6 +21,7 @@ class ImageMovingApp(QGraphicsView):
         super().__init__()
         self.count = 0
         self.setWindowTitle("DataShearing")
+        self.setWindowIcon(QIcon("images/appicon"))
         self.scene = QGraphicsScene(self)
         self.setScene(self.scene)
         self.scene.setSceneRect(self.scene.itemsBoundingRect())
@@ -32,6 +33,31 @@ class ImageMovingApp(QGraphicsView):
         self.scene.addItem(self.sheep)
         items.append(self.man)
         items.append(self.sheep)
+        self.proceed_button = QPushButton("Close", self)
+        self.proceed_button.clicked.connect(sys.exit)
+        self.proceed_button.setGeometry(250, 550, 300, 50)
+        proceed_button_stylesheet = """
+            QPushButton {
+                background-color: rgba(255, 100, 100, 128); /* Light red with 50% opacity */
+                color: white;
+                font-size: 50px;
+                padding: 10px 10px;
+            }
+
+            QPushButton:hover {
+                background-color: rgba(200, 0, 0, 128); /* Slightly darker red with 50% opacity */
+                font-size: 40px;
+                border-width: 10px;
+                border-style: solid;
+                border-color: #545454;
+            }
+        """
+
+
+                                
+        self.proceed_button.setStyleSheet(proceed_button_stylesheet)
+        self.proceed_button.setFixedHeight(80)  # Adjust the height as needed
+        self.proceed_button.setCursor(Qt.PointingHandCursor)
 
         self.man.setPos(100, 100)
         self.sheep.setPos(300, 300)

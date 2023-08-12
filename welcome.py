@@ -43,7 +43,6 @@ class ImageDisplayApp(QMainWindow):
         self.proceed_button.setFixedHeight(150)  # Adjust the height as needed
         self.proceed_button.setCursor(Qt.PointingHandCursor)
         self.proceed_button.clicked.connect(self.on_proceed)
-        self.media_player = QMediaPlayer()
 
         self.layout = QVBoxLayout(self.central_widget)
         self.layout.addWidget(self.image_label)

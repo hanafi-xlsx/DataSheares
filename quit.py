@@ -1,16 +1,5 @@
 from time import sleep
 from utils import play_audio
-import sys
-
-def quit_program():
-    play_audio("click")
-    print("Quitting program...")
-    sleep(1)
-    print("Thanks for using DataSheares!")
-    data_shearing()
-    sleep(1.5)
-    sys.exit()
-
 from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QGraphicsPixmapItem
 from PyQt5.QtCore import Qt, QTimer, QTime
 from PyQt5.QtGui import QPixmap, QTransform
@@ -94,7 +83,7 @@ class ImageMovingApp(QGraphicsView):
             self.man.setPixmap(QPixmap("images/sheares_empty.png").scaled(250, 250))
             self.sheep.setPixmap(QPixmap("images/sheared_sheep.png").scaled(160, 160))
 
-        if self.sheep_sheared and self.sheep_sheared_timer.elapsed() >= 3000:
+        if self.sheep_sheared and self.sheep_sheared_timer.elapsed() >= 1000:
             play_audio("sheep")
             self.sheep.setPixmap(QPixmap("images/sheep.png").scaled(160, 160))
             self.man.setPixmap(QPixmap("images/sheares.png").scaled(200, 200))
@@ -117,6 +106,8 @@ class ImageMovingApp(QGraphicsView):
 
     def spawn_wool(self, x, y):
         random_number = random.randint(1, 3)
+        if random.randint(1, 10) == 1:
+            random_number = 20
         for i in range(random_number):
             play_audio("pop")
             self.white_wool = MovingItem(QPixmap("images/white_wool.png").scaled(80, 80))
@@ -136,3 +127,13 @@ def data_shearing():
     window.show()
     window.setFixedSize(800, 700)
     app.exec_()
+
+def quit():
+    play_audio("click")
+    print("Thanks for using DataSheares!")
+    sleep(1)
+    data_shearing()
+    sleep(1.5)
+    sys.exit()
+
+quit()

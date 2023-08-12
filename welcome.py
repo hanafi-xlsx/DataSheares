@@ -26,15 +26,19 @@ class ImageDisplayApp(QMainWindow):
                                 QPushButton {
                                     background-color: darkgreen; 
                                     color: white; 
-                                    font-size: 60px; 
+                                    font-size: 70px; 
                                     padding: 10px 10px; 
                                 }
 
                                 QPushButton:hover {
                                     background-color: #26522d;
-                                    font-size: 80px;
-                                    }
+                                    font-size: 60px;
+                                    border-width: 10px;
+                                    border-style: solid;
+                                    border-color: #545454;                                    
+                                }
                                 """
+                                
         self.proceed_button.setStyleSheet(proceed_button_stylesheet)
         self.proceed_button.setFixedHeight(150)  # Adjust the height as needed
         self.proceed_button.setCursor(Qt.PointingHandCursor)
@@ -65,6 +69,7 @@ def welcome_window():
     qdarktheme.setup_theme("light")
     ex = ImageDisplayApp()
     ex.center_window()
+    ex.setWindowIcon(QIcon("images/appicon.png"))
     ex.setFixedSize(700,850)
     ex.show()
     app.exec_()

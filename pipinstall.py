@@ -5,7 +5,7 @@ import sys
 import os
 
 def install_pip_libraries():
-    modules = ["PyQt5", "numpy", "inquirer", "tabulate", "matplotlib"]
+    modules = ["PyQt5", "numpy", "inquirer", "tabulate", "matplotlib", "pygame"]
     root = tk.Tk()
     root.withdraw()
     try:

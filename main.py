@@ -5,8 +5,10 @@ from welcome import welcome_window
 from utils import clear, load_csv_data, show_message, confirm_exit, get_csv_file, validation_function, play_audio
 from charts import assignment_charts, dynamic_charts
 from stats import get_stats, list_items
-from quit import quit_program
 from tabulate import tabulate
+import os
+import sys
+import subprocess
 import numpy as np
 import inquirer
 
@@ -158,6 +160,12 @@ def custom_year_statistics():
     print(f"Statistics for {type_strings.lower()} from {start} to {end}")
     get_stats(custom_filter, [types[i-1] for i in type_menu if i!=0])
     statistics_menu()
+
+def quit_program():
+    clear()
+    current_folder = os.getcwd()
+    subprocess.run(['python', 'quit.py'], stderr=subprocess.DEVNULL, shell=True,  cwd=current_folder)
+    sys.exit()
 
 clear()
 welcome_window()

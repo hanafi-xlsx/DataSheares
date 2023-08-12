@@ -34,7 +34,7 @@ class ImageMovingApp(QGraphicsView):
         items.append(self.man)
         items.append(self.sheep)
         self.proceed_button = QPushButton("Close", self)
-        self.proceed_button.clicked.connect(sys.exit)
+        self.proceed_button.clicked.connect(self.close)
         self.proceed_button.setGeometry(250, 550, 300, 50)
         proceed_button_stylesheet = """
             QPushButton {
@@ -158,6 +158,7 @@ def quit():
     print("Thanks for using DataSheares!")
     sleep(1)
     data_shearing()
+    play_audio("click")
     sleep(1.5)
     sys.exit()
 

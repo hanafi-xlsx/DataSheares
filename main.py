@@ -163,6 +163,7 @@ def custom_year_statistics():
 
 def quit_program():
     clear()
+    play_audio("click")
     current_folder = os.getcwd()
     subprocess.run(['python', 'quit.py'], stderr=subprocess.DEVNULL, shell=True,  cwd=current_folder)
     sys.exit()

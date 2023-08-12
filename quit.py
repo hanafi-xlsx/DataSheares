@@ -129,7 +129,6 @@ def data_shearing():
     app.exec_()
 
 def quit():
-    play_audio("click")
     print("Thanks for using DataSheares!")
     sleep(1)
     data_shearing()

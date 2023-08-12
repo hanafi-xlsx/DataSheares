@@ -2,9 +2,10 @@ from os import system, name
 from PyQt5.QtWidgets import QApplication, QFileDialog, QMessageBox
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
+from inquirer import errors
 import sys
 import csv
-from inquirer import errors
+import pygame
 
 datasheares_icon = "images/appicon.png"
 
@@ -60,7 +61,7 @@ def confirm_exit():
     msg_box = QMessageBox()
     msg_box.setWindowIcon(QIcon(datasheares_icon))
     msg_box.setWindowTitle("Confirm")
-    msg_box.setText("Are you sure you want to close DataSheares? :((((")
+    msg_box.setText("Are you sure you want to close DataSheares?")
     msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
     choice = msg_box.exec_()
     if choice == QMessageBox.Yes:
@@ -71,5 +72,11 @@ def confirm_exit():
 def validation_function(answers, current):
    if current == []:
       raise errors.ValidationError('', reason='You need to select at least one option.')
-
    return True
+
+def play_audio(filename):
+    pygame.init()
+    audio_file_path = "audio/"+filename+".mp3"  # Replace with the actual path to your audio file
+    sound = pygame.mixer.Sound(audio_file_path)
+    sound.play()
+    

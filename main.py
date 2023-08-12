@@ -2,7 +2,7 @@ from pipinstall import install_pip_libraries
 install_pip_libraries()
 from time import sleep
 from welcome import welcome_window
-from utils import clear, load_csv_data, show_message, confirm_exit, get_csv_file, validation_function
+from utils import clear, load_csv_data, show_message, confirm_exit, get_csv_file, validation_function, play_audio
 from charts import assignment_charts, dynamic_charts
 from stats import get_stats, list_items
 from quit import quit_program
@@ -49,6 +49,7 @@ def retrieve_data():
     except:
         show_message(2, "Error", "Invalid .csv file.")
         return retrieve_data()
+    play_audio("orb")
     main_menu()
 
 """

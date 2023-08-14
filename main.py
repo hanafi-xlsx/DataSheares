@@ -12,6 +12,8 @@ import inquirer
 
 type_index, type_string, type_array = None, None, None
 quit_message = "Thanks for using this program."
+filter_custom_choice = "Filter the statistics by a custom range of years"
+filter_years_choice = "View and compare data for specific year(s)"
 
 def go_to_main_menu():
     print("Going to main menu...")
@@ -143,7 +145,7 @@ def statistics_menu():
     global type_string
 
     stats_menu = inquirer.list_input("Select a choice",
-                    choices=[(f"Filter the statistics by a custom range of years", 1), (f"View and compare data for specific year(s)",2), ("Back to the main menu",3), ("Quit program",4)],
+                    choices=[(filter_custom_choice, 1), (filter_years_choice,2), ("Back to the main menu",3), ("Quit program",4)],
                     carousel=True)
 
     match(stats_menu):
@@ -151,7 +153,7 @@ def statistics_menu():
             custom_year_statistics()
         case(2):
             clear()
-            print(f"You selected: 'View and compare data for specific year(s)'.\n")
+            print(f"You selected: '{filter_years_choice}'.\n")
 
             year_select = inquirer.checkbox(f"Select the year(s) you want to view, from {array_clean[0,0]} to {array_clean[-1,0]}",
                             choices=[i for i in range(array_clean[0,0], array_clean[-1,0]+1)],
@@ -180,7 +182,7 @@ def custom_year_statistics():
     global type_strings
 
     clear()
-    print(f"You selected 'Filter the statistics by a custom range of years'.\n")
+    print(f"You selected '{filter_custom_choice}'.\n")
 
     start = inquirer.list_input(f"Please select the start year (between {array_clean[0,0]} to {array_clean[-1,0]-1})",
                 choices=[i for i in range(array_clean[0,0], array_clean[-1,0])],

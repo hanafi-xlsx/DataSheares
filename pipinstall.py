@@ -11,7 +11,7 @@ def install_pip_libraries():
     try:
         module_statuses = {module: True if __import__(module) else False for module in modules}
     except:
-        answer = messagebox.askquestion("Installation", "Do you want to begin the greatness?")
+        answer = messagebox.askquestion("Installation", "Do you want to install the required modules?")
         match(answer):
             case("yes"):
                 modules.append("pyqtdarktheme")

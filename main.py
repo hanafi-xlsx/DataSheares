@@ -3,7 +3,7 @@ install_pip_libraries()
 from time import sleep
 from welcome import welcome_window
 from utils import clear, load_csv_data, show_message, confirm_exit, get_csv_file, validation_function, play_audio
-from charts import assignment_charts, dynamic_charts
+from charts import assignment_charts, desired_charts_menu
 from stats import get_stats, list_items
 from quit import quit_program
 from tabulate import tabulate
@@ -64,7 +64,7 @@ def retrieve_data():
         array_raw = np.array(load_csv_data(file_path)) # Load the CSV file into a NumPy array called 'array_raw'.
         types = array_raw[1:,0]  # Define a list of vehicle types.
         array_clean = np.array(array_raw.T[1:,], dtype=np.int32) # Remove 'types' column and transposes the array   
-    except:
+    except ValueError:
         show_message(2, "Error", "Invalid .csv file.")
         return retrieve_data()
     play_audio("orb")
@@ -97,7 +97,7 @@ Create your own charts:
             assignment_charts(array_clean)
             view_charts_menu()
         case(2):
-            dynamic_charts(array_clean, types)
+            desired_charts_menu(array_clean, types)
             view_charts_menu()
         case(3):
             main_menu()
@@ -152,27 +152,30 @@ def statistics_menu():
         case(1):
             custom_year_statistics()
         case(2):
-            clear()
-            print(f"You selected: '{filter_years_choice}'.\n")
-
-            year_select = inquirer.checkbox(f"Select the year(s) you want to view, from {array_clean[0,0]} to {array_clean[-1,0]}",
-                            choices=[i for i in range(array_clean[0,0], array_clean[-1,0]+1)],
-                            carousel=True,
-                            validate=validation_function)
-            
-            chosen_years = year_select
-            chosen_indexes = [year%100 for year in chosen_years]
-            chosen_years_array = np.array(array_clean[chosen_indexes, :])
-            chosen_years_array = chosen_years_array[:, type_menu]
-            headers = [types[i-1] for i in type_menu if i!=0]
-            headers.insert(0,'Year')
-            clear()
-            print(tabulate(chosen_years_array, headers=headers, tablefmt="rounded_grid"))
-            statistics_menu()
+            tabulate_specific_years()
         case(3):
             go_to_main_menu()  # Go back to the main menu.
         case(4):
             quit_program()  # Quit the program.
+
+def tabulate_specific_years():
+    clear()
+    print(f"You selected: '{filter_years_choice}'.\n")
+
+    year_select = inquirer.checkbox(f"Select the year(s) you want to view, from {array_clean[0,0]} to {array_clean[-1,0]}",
+                    choices=[i for i in range(array_clean[0,0], array_clean[-1,0]+1)],
+                    carousel=True,
+                    validate=validation_function)
+    
+    chosen_years = year_select
+    chosen_indexes = [year%100 for year in chosen_years]
+    chosen_years_array = np.array(array_clean[chosen_indexes, :])
+    chosen_years_array = chosen_years_array[:, type_menu]
+    headers = [types[i-1] for i in type_menu if i!=0]
+    headers.insert(0,'Year')
+    clear()
+    print(tabulate(chosen_years_array, headers=headers, tablefmt="rounded_grid"))
+    statistics_menu()
 
 """
 custom_year_statistics() shows statistics for a single type for a custom range of years
